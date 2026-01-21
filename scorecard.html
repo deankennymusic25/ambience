@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ambience">
+    <meta name="theme-color" content="#E8E0F0">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <title>Ambience - Scorecard</title>
+    <style>
+        /* ==================== LAVENDER MINIMAL THEME ==================== */
+        :root {
+            --bg-primary: #F7F4FA;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-card-hover: #F0EBF5;
+            --bg-card-active: #E8E0F0;
+            --text-primary: #4A4458;
+            --text-secondary: #8B839C;
+            --text-muted: #B8B0C8;
+            --accent: #9D8EC7;
+            --accent-light: #C4B8DB;
+            --accent-dark: #7B6FA8;
+            --border: #E8E0F0;
+            --shadow: rgba(157, 142, 199, 0.1);
+            --success: #7CB8A0;
+            --success-light: rgba(124, 184, 160, 0.15);
+            --warning: #D4A96A;
+            --warning-light: rgba(212, 169, 106, 0.15);
+            --danger: #C98B8B;
+            --danger-light: rgba(201, 139, 139, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 30px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 6px;
+            background: var(--bg-secondary);
+            border-radius: 30px;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Status Colors - Softer tones */
+        .status-green { color: var(--success); }
+        .status-amber { color: var(--warning); }
+        .status-red { color: var(--danger); }
+        .bg-green { background: var(--success-light); border-color: var(--success); }
+        .bg-amber { background: var(--warning-light); border-color: var(--warning); }
+        .bg-red { background: var(--danger-light); border-color: var(--danger); }
+
+        /* Color-blind accessible status icons */
+        .status-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            line-height: 18px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .status-icon.green { background: var(--success); color: #fff; }
+        .status-icon.green::after { content: '✓'; }
+        .status-icon.amber { background: var(--warning); color: #fff; }
+        .status-icon.amber::after { content: '–'; }
+        .status-icon.red { background: var(--danger); color: #fff; }
+        .status-icon.red::after { content: '!'; }
+
+        /* Today's Status Banner */
+        .status-banner {
+            text-align: center;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid;
+        }
+
+        .status-banner h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 4px;
+        }
+
+        .status-banner .score {
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .status-banner .status-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        /* Streaks */
+        .streaks {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .streak-item {
+            text-align: center;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .streak-number {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--accent-dark);
+        }
+
+        .streak-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Check-in Form */
+        .checkin-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .checkin-card h3 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dimension {
+            margin-bottom: 24px;
+        }
+
+        .dimension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .dimension-name {
+            font-size: 1rem;
+            color: #ddd;
+        }
+
+        .dimension-value {
+            font-size: 1.2rem;
+            font-weight: 500;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .dimension-description {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .rating-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .rating-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .rating-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-container {
+            position: relative;
+            padding: 0 5px;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .slider-label {
+            font-size: 0.7rem;
+            color: #666;
+            max-width: 80px;
+        }
+
+        .slider-label.low {
+            text-align: left;
+        }
+
+        .slider-label.high {
+            text-align: right;
+            color: #00b894;
+        }
+
+        .note-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #ddd;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 80px;
+            margin-top: 10px;
+        }
+
+        .note-input::placeholder {
+            color: #555;
+        }
+
+        .note-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00b894, #00a085);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 184, 148, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Calendar */
+        .calendar-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-title {
+            font-size: 1.1rem;
+            color: #aaa;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #888;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .calendar-nav button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #666;
+            padding: 5px;
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #555;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .calendar-day.has-entry {
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .calendar-day.today {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .calendar-day.green {
+            background: rgba(0, 184, 148, 0.4);
+            border: 2px solid #00b894;
+        }
+        .calendar-day.amber {
+            background: rgba(253, 203, 110, 0.4);
+            border: 2px dashed #fdcb6e;
+        }
+        .calendar-day.red {
+            background: rgba(225, 112, 85, 0.4);
+            border: 2px dotted #e17055;
+        }
+
+        /* Weekly Summary */
+        .weekly-summary {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .weekly-summary h3 {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        /* Weekly Review */
+        .weekly-review {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+        }
+
+        .weekly-review h3 {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .review-prompt {
+            margin-bottom: 20px;
+        }
+
+        .review-prompt label {
+            display: block;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .review-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        .review-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .save-review-btn {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .save-review-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        /* Entry Detail Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.visible .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .modal-score {
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .modal-status-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .modal-dimensions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-dim {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .modal-dim-value {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 4px;
+        }
+
+        .modal-dim-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-note {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 0.9rem;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .modal-note-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-style: normal;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .streaks { flex-direction: column; gap: 15px; }
+            .checkin-card { padding: 20px; }
+            .calendar-day { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AMBIENCE</h1>
+            <p class="subtitle">Regulate. Reflect. Restore.</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <a href="noisli.html" class="nav-tab">Sounds</a>
+            <a href="scorecard.html" class="nav-tab active">Scorecard</a>
+            <a href="analytics.html" class="nav-tab">Analytics</a>
+        </nav>
+
+        <!-- Today's Status -->
+        <div class="status-banner bg-green" id="statusBanner">
+            <div class="status-label">Today's Status</div>
+            <div class="score" id="todayScore">--</div>
+            <h2 id="statusText">No check-in yet</h2>
+        </div>
+
+        <!-- Streaks -->
+        <div class="streaks">
+            <div class="streak-item">
+                <div class="streak-number status-green" id="greenStreak">0</div>
+                <div class="streak-label">Green Streak</div>
+            </div>
+            <div class="streak-item">
+                <div class="streak-number" id="checkinStreak">0</div>
+                <div class="streak-label">Check-in Streak</div>
+            </div>
+            <div class="streak-item">
+                <div class="streak-number" id="weeklyAvg">--</div>
+                <div class="streak-label">Weekly Avg</div>
+            </div>
+        </div>
+
+        <!-- Daily Check-in -->
+        <div class="checkin-card">
+            <h3>Daily Check-In</h3>
+
+            <div class="dimension">
+                <div class="dimension-header">
+                    <span class="dimension-name">Nervous System Tone</span>
+                    <span class="dimension-value" id="toneValue">3</span>
+                </div>
+                <div class="slider-container">
+                    <input type="range" class="rating-slider" id="toneSlider" min="1" max="5" value="3">
+                    <div class="slider-labels">
+                        <span class="slider-label low">Dysregulated</span>
+                        <span class="slider-label high">Grounded</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dimension">
+                <div class="dimension-header">
+                    <span class="dimension-name">Mental Load</span>
+                    <span class="dimension-value" id="loadValue">3</span>
+                </div>
+                <div class="slider-container">
+                    <input type="range" class="rating-slider" id="loadSlider" min="1" max="5" value="3">
+                    <div class="slider-labels">
+                        <span class="slider-label low">Overwhelmed</span>
+                        <span class="slider-label high">Clear</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dimension">
+                <div class="dimension-header">
+                    <span class="dimension-name">Energy Quality</span>
+                    <span class="dimension-value" id="energyValue">3</span>
+                </div>
+                <div class="slider-container">
+                    <input type="range" class="rating-slider" id="energySlider" min="1" max="5" value="3">
+                    <div class="slider-labels">
+                        <span class="slider-label low">Depleted</span>
+                        <span class="slider-label high">Vital</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dimension">
+                <div class="dimension-header">
+                    <span class="dimension-name">Reactivity</span>
+                    <span class="dimension-value" id="reactivityValue">3</span>
+                </div>
+                <div class="slider-container">
+                    <input type="range" class="rating-slider" id="reactivitySlider" min="1" max="5" value="3">
+                    <div class="slider-labels">
+                        <span class="slider-label low">Reactive</span>
+                        <span class="slider-label high">Centered</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dimension">
+                <label class="dimension-name">What contributed most today?</label>
+                <textarea class="note-input" id="noteInput" placeholder="Optional: sleep, exercise, work stress, interactions..."></textarea>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="saveCheckin()">Save Check-In</button>
+        </div>
+
+        <!-- Calendar View -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <span class="calendar-title" id="calendarTitle">January 2026</span>
+                <div class="calendar-nav">
+                    <button onclick="changeMonth(-1)">&lt;</button>
+                    <button onclick="changeMonth(1)">&gt;</button>
+                </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <!-- Weekly Summary -->
+        <div class="weekly-summary">
+            <h3>This Week</h3>
+            <div class="summary-stats">
+                <div class="stat-box">
+                    <div class="stat-value status-green" id="greenDays">0</div>
+                    <div class="stat-label">Green Days</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value status-amber" id="amberDays">0</div>
+                    <div class="stat-label">Amber Days</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value status-red" id="redDays">0</div>
+                    <div class="stat-label">Red Days</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="weekAvgScore">--</div>
+                    <div class="stat-label">Avg Score</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Review -->
+        <div class="weekly-review">
+            <h3>Weekly Reflection</h3>
+            <div class="review-prompt">
+                <label>What increased your green days?</label>
+                <input type="text" class="review-input" id="reviewGreen" placeholder="e.g., morning walks, better sleep...">
+            </div>
+            <div class="review-prompt">
+                <label>What made things worse?</label>
+                <input type="text" class="review-input" id="reviewWorse" placeholder="e.g., late nights, skipped meals...">
+            </div>
+            <div class="review-prompt">
+                <label>One small adjustment for next week?</label>
+                <input type="text" class="review-input" id="reviewAdjustment" placeholder="e.g., 10pm bedtime, daily walk...">
+            </div>
+            <button class="save-review-btn" onclick="saveWeeklyReview()">Save Reflection</button>
+        </div>
+    </div>
+
+    <!-- Entry Detail Modal -->
+    <div class="modal-overlay" id="entryModal" onclick="closeEntryModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span class="modal-title" id="modalDate">January 15, 2026</span>
+                <button class="modal-close" onclick="closeEntryModal()">&times;</button>
+            </div>
+            <div class="modal-status bg-green" id="modalStatus">
+                <div class="modal-score" id="modalScore">4.2</div>
+                <div class="modal-status-text" id="modalStatusText">Regulated</div>
+            </div>
+            <div class="modal-dimensions">
+                <div class="modal-dim">
+                    <div class="modal-dim-value" id="modalTone">4</div>
+                    <div class="modal-dim-label">Tone</div>
+                </div>
+                <div class="modal-dim">
+                    <div class="modal-dim-value" id="modalLoad">4</div>
+                    <div class="modal-dim-label">Load</div>
+                </div>
+                <div class="modal-dim">
+                    <div class="modal-dim-value" id="modalEnergy">5</div>
+                    <div class="modal-dim-label">Energy</div>
+                </div>
+                <div class="modal-dim">
+                    <div class="modal-dim-value" id="modalReactivity">4</div>
+                    <div class="modal-dim-label">Reactivity</div>
+                </div>
+            </div>
+            <div class="modal-note" id="modalNoteContainer" style="display: none;">
+                <div class="modal-note-label">Notes</div>
+                <div id="modalNote"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STORAGE ====================
+        const STORAGE_KEY = 'ambienceScorecard';
+
+        function getData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : { entries: {}, reviews: {} };
+        }
+
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // ==================== STATUS CALCULATION ====================
+        function calculateStatus(avg) {
+            if (avg >= 4.0) return 'green';
+            if (avg >= 2.5) return 'amber';
+            return 'red';
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'green': return '<span class="status-icon green"></span>Regulated';
+                case 'amber': return '<span class="status-icon amber"></span>Managing';
+                case 'red': return '<span class="status-icon red"></span>Dysregulated';
+                default: return 'No check-in yet';
+            }
+        }
+
+        // ==================== CHECK-IN ====================
+        function saveCheckin() {
+            const tone = parseInt(document.getElementById('toneSlider').value);
+            const load = parseInt(document.getElementById('loadSlider').value);
+            const energy = parseInt(document.getElementById('energySlider').value);
+            const reactivity = parseInt(document.getElementById('reactivitySlider').value);
+            const note = document.getElementById('noteInput').value;
+
+            const avg = (tone + load + energy + reactivity) / 4;
+            const status = calculateStatus(avg);
+
+            const entry = {
+                date: getToday(),
+                tone,
+                load,
+                energy,
+                reactivity,
+                average: Math.round(avg * 100) / 100,
+                status,
+                note,
+                createdAt: new Date().toISOString()
+            };
+
+            const data = getData();
+            data.entries[getToday()] = entry;
+            saveData(data);
+
+            updateUI();
+            document.getElementById('submitBtn').textContent = 'Updated!';
+            setTimeout(() => {
+                document.getElementById('submitBtn').textContent = 'Save Check-In';
+            }, 2000);
+        }
+
+        // ==================== UI UPDATES ====================
+        function updateUI() {
+            const data = getData();
+            const today = getToday();
+            const todayEntry = data.entries[today];
+
+            // Update today's status
+            if (todayEntry) {
+                document.getElementById('todayScore').textContent = todayEntry.average.toFixed(1);
+                document.getElementById('statusText').innerHTML = getStatusText(todayEntry.status);
+
+                const banner = document.getElementById('statusBanner');
+                banner.className = 'status-banner bg-' + todayEntry.status;
+
+                // Update sliders to match saved values
+                document.getElementById('toneSlider').value = todayEntry.tone;
+                document.getElementById('loadSlider').value = todayEntry.load;
+                document.getElementById('energySlider').value = todayEntry.energy;
+                document.getElementById('reactivitySlider').value = todayEntry.reactivity;
+                document.getElementById('noteInput').value = todayEntry.note || '';
+
+                updateSliderDisplays();
+            }
+
+            // Calculate streaks
+            calculateStreaks(data);
+
+            // Update weekly summary
+            updateWeeklySummary(data);
+
+            // Render calendar
+            renderCalendar();
+
+            // Load weekly review
+            loadWeeklyReview();
+        }
+
+        function updateSliderDisplays() {
+            document.getElementById('toneValue').textContent = document.getElementById('toneSlider').value;
+            document.getElementById('loadValue').textContent = document.getElementById('loadSlider').value;
+            document.getElementById('energyValue').textContent = document.getElementById('energySlider').value;
+            document.getElementById('reactivityValue').textContent = document.getElementById('reactivitySlider').value;
+        }
+
+        function calculateStreaks(data) {
+            const entries = Object.values(data.entries).sort((a, b) =>
+                new Date(b.date) - new Date(a.date)
+            );
+
+            let greenStreak = 0;
+            let checkinStreak = 0;
+            let checkDate = new Date();
+            checkDate.setHours(0, 0, 0, 0);
+
+            // Calculate check-in streak
+            for (let i = 0; i < 365; i++) {
+                const dateStr = checkDate.toISOString().split('T')[0];
+                const entry = data.entries[dateStr];
+
+                if (entry) {
+                    checkinStreak++;
+                    if (entry.status === 'green') {
+                        if (i === 0 || greenStreak > 0) greenStreak++;
+                    } else {
+                        if (greenStreak > 0) break;
+                    }
+                } else if (i > 0) {
+                    break;
+                }
+
+                checkDate.setDate(checkDate.getDate() - 1);
+            }
+
+            document.getElementById('greenStreak').textContent = greenStreak;
+            document.getElementById('checkinStreak').textContent = checkinStreak;
+
+            // Weekly average
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekEntries = entries.filter(e => new Date(e.date) >= weekAgo);
+            if (weekEntries.length > 0) {
+                const avg = weekEntries.reduce((sum, e) => sum + e.average, 0) / weekEntries.length;
+                document.getElementById('weeklyAvg').textContent = avg.toFixed(1);
+            }
+        }
+
+        function updateWeeklySummary(data) {
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+
+            const weekEntries = Object.values(data.entries).filter(e =>
+                new Date(e.date) >= weekAgo
+            );
+
+            let green = 0, amber = 0, red = 0;
+            weekEntries.forEach(e => {
+                if (e.status === 'green') green++;
+                else if (e.status === 'amber') amber++;
+                else red++;
+            });
+
+            document.getElementById('greenDays').textContent = green;
+            document.getElementById('amberDays').textContent = amber;
+            document.getElementById('redDays').textContent = red;
+
+            if (weekEntries.length > 0) {
+                const avg = weekEntries.reduce((sum, e) => sum + e.average, 0) / weekEntries.length;
+                document.getElementById('weekAvgScore').textContent = avg.toFixed(1);
+            }
+        }
+
+        // ==================== CALENDAR ====================
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        function renderCalendar() {
+            const data = getData();
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Update title
+            const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('calendarTitle').textContent =
+                `${months[currentMonth]} ${currentYear}`;
+
+            // Day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            // First day of month
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const today = getToday();
+
+            // Empty cells before first day
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day';
+                grid.appendChild(empty);
+            }
+
+            // Day cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const entry = data.entries[dateStr];
+
+                const cell = document.createElement('div');
+                cell.className = 'calendar-day';
+                cell.textContent = day;
+
+                if (dateStr === today) {
+                    cell.classList.add('today');
+                }
+
+                if (entry) {
+                    cell.classList.add('has-entry', entry.status);
+                    cell.onclick = () => showEntryModal(dateStr);
+                }
+
+                grid.appendChild(cell);
+            }
+        }
+
+        // ==================== ENTRY DETAIL MODAL ====================
+        function showEntryModal(dateStr) {
+            const data = getData();
+            const entry = data.entries[dateStr];
+            if (!entry) return;
+
+            // Format date for display
+            const date = new Date(dateStr);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('modalDate').textContent = date.toLocaleDateString('en-US', options);
+
+            // Update status section
+            document.getElementById('modalScore').textContent = entry.average.toFixed(1);
+            document.getElementById('modalStatusText').innerHTML = getStatusText(entry.status);
+
+            const statusEl = document.getElementById('modalStatus');
+            statusEl.className = 'modal-status bg-' + entry.status;
+
+            // Update dimensions
+            document.getElementById('modalTone').textContent = entry.tone;
+            document.getElementById('modalLoad').textContent = entry.load;
+            document.getElementById('modalEnergy').textContent = entry.energy;
+            document.getElementById('modalReactivity').textContent = entry.reactivity;
+
+            // Update note
+            const noteContainer = document.getElementById('modalNoteContainer');
+            if (entry.note && entry.note.trim()) {
+                document.getElementById('modalNote').textContent = entry.note;
+                noteContainer.style.display = 'block';
+            } else {
+                noteContainer.style.display = 'none';
+            }
+
+            // Show modal
+            document.getElementById('entryModal').classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEntryModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('entryModal').classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        // ==================== WEEKLY REVIEW ====================
+        function getWeekKey() {
+            const now = new Date();
+            const weekStart = new Date(now);
+            weekStart.setDate(now.getDate() - now.getDay());
+            return weekStart.toISOString().split('T')[0];
+        }
+
+        function saveWeeklyReview() {
+            const data = getData();
+            const weekKey = getWeekKey();
+
+            data.reviews[weekKey] = {
+                green: document.getElementById('reviewGreen').value,
+                worse: document.getElementById('reviewWorse').value,
+                adjustment: document.getElementById('reviewAdjustment').value,
+                savedAt: new Date().toISOString()
+            };
+
+            saveData(data);
+            alert('Reflection saved!');
+        }
+
+        function loadWeeklyReview() {
+            const data = getData();
+            const weekKey = getWeekKey();
+            const review = data.reviews[weekKey];
+
+            if (review) {
+                document.getElementById('reviewGreen').value = review.green || '';
+                document.getElementById('reviewWorse').value = review.worse || '';
+                document.getElementById('reviewAdjustment').value = review.adjustment || '';
+            }
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Slider event listeners
+            ['tone', 'load', 'energy', 'reactivity'].forEach(dim => {
+                document.getElementById(dim + 'Slider').addEventListener('input', updateSliderDisplays);
+            });
+
+            updateUI();
+
+            // Escape key to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeEntryModal();
+                }
+            });
+
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            }
+        });
+    </script>
+</body>
+</html>
