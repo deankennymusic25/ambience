@@ -1,0 +1,2716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ambience">
+    <meta name="theme-color" content="#E8E0F0">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <title>Ambience - Ambient & Wellness</title>
+    <style>
+        /* ==================== LAVENDER MINIMAL THEME ==================== */
+        :root {
+            --bg-primary: #F7F4FA;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-card-hover: #F0EBF5;
+            --bg-card-active: #E8E0F0;
+            --text-primary: #4A4458;
+            --text-secondary: #8B839C;
+            --text-muted: #B8B0C8;
+            --accent: #9D8EC7;
+            --accent-light: #C4B8DB;
+            --accent-dark: #7B6FA8;
+            --border: #E8E0F0;
+            --shadow: rgba(157, 142, 199, 0.1);
+            --success: #9DC88D;
+            --warning: #E8C87D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 6px;
+            background: var(--bg-secondary);
+            border-radius: 30px;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 0 30px;
+            position: relative;
+        }
+
+        .menu-btn {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .menu-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        /* Master Controls */
+        .master-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .master-controls label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .master-volume {
+            width: 150px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .master-volume::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(157, 142, 199, 0.3);
+        }
+
+        .controls-divider {
+            width: 1px;
+            height: 30px;
+            background: var(--border);
+            margin: 0 10px;
+        }
+
+        /* Sleep Timer */
+        .sleep-timer-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sleep-timer-btn {
+            background: var(--bg-card-hover);
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sleep-timer-btn:hover {
+            background: var(--bg-card-active);
+            color: var(--text-primary);
+        }
+
+        .sleep-timer-btn.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .sleep-timer-display {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(157, 142, 199, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-light);
+        }
+
+        .sleep-timer-display.active {
+            display: flex;
+        }
+
+        .sleep-timer-display .timer-icon {
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .sleep-timer-display .timer-countdown {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--accent-dark);
+            min-width: 50px;
+        }
+
+        .sleep-timer-display .cancel-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 5px;
+            transition: color 0.2s;
+        }
+
+        .sleep-timer-display .cancel-btn:hover {
+            color: var(--accent-dark);
+        }
+
+        .sleep-timer-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 100;
+            min-width: 130px;
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .sleep-timer-dropdown.show {
+            display: flex;
+        }
+
+        .sleep-timer-dropdown button {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            min-height: 44px;
+            font-size: 0.9rem;
+        }
+
+        .sleep-timer-dropdown button:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .sleep-timer-wrapper {
+            position: relative;
+        }
+
+        /* Sound Grid */
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            padding: 10px 0;
+        }
+
+        .sound-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .sound-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow);
+            border-color: var(--accent-light);
+        }
+
+        .sound-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 4px 20px rgba(157, 142, 199, 0.2);
+            background: var(--bg-card-active);
+        }
+
+        .sound-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.25s ease;
+        }
+
+        .sound-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .sound-card.active .sound-icon {
+            color: var(--accent);
+        }
+
+        .sound-name {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+            transition: color 0.25s ease;
+        }
+
+        .sound-card.active .sound-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .volume-slider {
+            width: 100%;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            outline: none;
+            transition: background 0.25s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(157, 142, 199, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background: var(--accent);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(157, 142, 199, 0.3);
+        }
+
+        .sound-card.active input[type="range"] {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--border) 100%);
+        }
+
+        .sound-card.active input[type="range"]::-webkit-slider-thumb {
+            background: var(--accent);
+        }
+
+        .sound-card.hidden {
+            display: none;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .filter-divider {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        /* Shuffle Button */
+        .shuffle-btn {
+            background: var(--bg-card-hover);
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shuffle-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Binaural Info Tooltip */
+        .sound-card .info-trigger {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: help;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .sound-card .info-trigger:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .sound-card .info-tooltip {
+            position: absolute;
+            top: 32px;
+            right: 0;
+            width: 220px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 8px 24px var(--shadow);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            text-align: left;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .sound-card .info-trigger:hover + .info-tooltip,
+        .sound-card .info-tooltip:hover {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .sound-card .info-tooltip strong {
+            color: var(--accent-dark);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .sound-card .info-tooltip .headphones-note {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+            color: var(--accent);
+            font-size: 0.7rem;
+        }
+
+        /* Preset Sidebar */
+        .preset-sidebar {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 999;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .preset-sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            min-width: 44px;
+            min-height: 44px;
+            transition: color 0.2s;
+        }
+
+        .sidebar-close:hover {
+            color: var(--text-primary);
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-action-btn {
+            flex: 1;
+            padding: 12px 15px;
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 48px;
+        }
+
+        .sidebar-action-btn:hover {
+            background: var(--bg-card-active);
+            color: var(--text-primary);
+        }
+
+        .sidebar-action-btn.primary {
+            background: rgba(157, 142, 199, 0.15);
+            border-color: var(--accent-light);
+            color: var(--accent-dark);
+        }
+
+        .sidebar-action-btn.primary:hover {
+            background: rgba(157, 142, 199, 0.25);
+        }
+
+        .preset-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .preset-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-light);
+        }
+
+        .preset-card.active {
+            border-color: var(--accent);
+            background: rgba(157, 142, 199, 0.1);
+        }
+
+        .preset-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .preset-icon {
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .preset-name {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .preset-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .preset-card:hover .preset-delete {
+            opacity: 1;
+        }
+
+        .preset-delete:hover {
+            color: var(--warning);
+        }
+
+        .preset-sounds {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Save Preset Modal */
+        .save-preset-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(74, 68, 88, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .save-preset-modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .save-preset-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 28px;
+            width: 90%;
+            max-width: 340px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .save-preset-content h3 {
+            margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+
+        .save-preset-content input {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .save-preset-content input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .save-preset-content input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .save-preset-icons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .icon-option {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .icon-option:hover {
+            background: var(--bg-card-active);
+        }
+
+        .icon-option.selected {
+            border-color: var(--accent);
+            background: rgba(157, 142, 199, 0.2);
+        }
+
+        .save-preset-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .save-preset-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 48px;
+        }
+
+        .save-preset-buttons .cancel-btn {
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .save-preset-buttons .cancel-btn:hover {
+            background: var(--bg-card-active);
+        }
+
+        .save-preset-buttons .save-btn {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+        }
+
+        .save-preset-buttons .save-btn:hover {
+            background: var(--accent-dark);
+        }
+
+        .no-presets {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 20px;
+        }
+
+        /* Mobile adjustments for sidebar */
+        @media (max-width: 600px) {
+            .preset-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Meditation Section */
+        .section-title {
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            margin: 50px 0 25px;
+            text-transform: uppercase;
+        }
+
+        .meditation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            padding: 10px 0;
+        }
+
+        .meditation-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 1px solid var(--border);
+        }
+
+        .meditation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow);
+            border-color: var(--accent-light);
+        }
+
+        .meditation-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 4px 20px rgba(157, 142, 199, 0.2);
+            background: var(--bg-card-active);
+        }
+
+        .meditation-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .meditation-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.25s ease;
+        }
+
+        .meditation-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .meditation-card.active .meditation-icon {
+            color: var(--accent);
+        }
+
+        .meditation-info {
+            flex: 1;
+        }
+
+        .meditation-name {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            transition: color 0.25s ease;
+        }
+
+        .meditation-card.active .meditation-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .meditation-duration {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .meditation-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .meditation-volume {
+            flex: 1;
+        }
+
+        .loop-selector {
+            display: flex;
+            gap: 5px;
+        }
+
+        .loop-btn {
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loop-btn:hover {
+            background: var(--bg-card-active);
+            color: var(--text-primary);
+        }
+
+        .loop-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .meditation-timer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .timer-display {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .meditation-card.active .timer-display {
+            color: var(--text-primary);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin: 0 15px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar:hover {
+            background: var(--bg-card-active);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.1s linear;
+            pointer-events: none;
+        }
+
+        .progress-bar::after {
+            content: 'Click to seek';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .progress-bar:hover::after {
+            opacity: 1;
+        }
+
+        .play-pause-btn {
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-pause-btn:hover {
+            background: var(--bg-card-active);
+            color: var(--text-primary);
+        }
+
+        .meditation-card.active .play-pause-btn {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .filter-buttons {
+                gap: 6px;
+            }
+
+            .filter-btn {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+
+            .filter-divider {
+                display: none;
+            }
+
+            .shuffle-btn {
+                padding: 6px 12px;
+            }
+
+            .shuffle-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .sound-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .sound-card {
+                padding: 18px 12px;
+            }
+
+            .sound-card .info-trigger {
+                width: 18px;
+                height: 18px;
+                font-size: 0.6rem;
+            }
+
+            .sound-card .info-tooltip {
+                width: 180px;
+                right: -10px;
+                font-size: 0.7rem;
+            }
+
+            .sound-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .sound-icon svg {
+                width: 26px;
+                height: 26px;
+            }
+
+            .master-controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .master-volume {
+                width: 100%;
+            }
+
+            .controls-divider {
+                width: 100%;
+                height: 1px;
+                margin: 5px 0;
+            }
+
+            .sleep-timer-container {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .meditation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meditation-card {
+                padding: 18px;
+            }
+
+            .meditation-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .meditation-volume {
+                width: 100%;
+            }
+
+            .loop-selector {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="menu-btn" onclick="togglePresetSidebar()" title="Presets">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.5">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <h1>AMBIENCE</h1>
+            <p class="subtitle">Regulate. Reflect. Restore.</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <a href="noisli.html" class="nav-tab active">Sounds</a>
+            <a href="scorecard.html" class="nav-tab">Scorecard</a>
+            <a href="analytics.html" class="nav-tab">Analytics</a>
+        </nav>
+
+        <div class="master-controls">
+            <label>MASTER VOLUME</label>
+            <input type="range" class="master-volume" id="masterVolume" min="0" max="100" value="70">
+
+            <div class="controls-divider"></div>
+
+            <div class="sleep-timer-wrapper">
+                <button class="sleep-timer-btn" id="sleepTimerBtn" onclick="toggleSleepTimerDropdown()">
+                    Sleep Timer
+                </button>
+                <div class="sleep-timer-dropdown" id="sleepTimerDropdown">
+                    <button onclick="startSleepTimer(5)">5 minutes</button>
+                    <button onclick="startSleepTimer(10)">10 minutes</button>
+                    <button onclick="startSleepTimer(15)">15 minutes</button>
+                </div>
+            </div>
+
+            <div class="sleep-timer-display" id="sleepTimerDisplay">
+                <span class="timer-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg></span>
+                <span class="timer-countdown" id="sleepTimerCountdown">0:00</span>
+                <button class="cancel-btn" onclick="cancelSleepTimer()" title="Cancel timer">×</button>
+            </div>
+
+            <div class="controls-divider"></div>
+
+            <button class="shuffle-btn" onclick="randomizeSounds()" title="Shuffle mix">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M18 4l3 3-3 3"/><path d="M18 20l3-3-3-3"/><path d="M3 7h3a5 5 0 0 1 5 5 5 5 0 0 0 5 5h5"/><path d="M21 7h-5a5 5 0 0 0-5 5 5 5 0 0 1-5 5H3"/></svg>
+            </button>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-buttons" id="allFilters">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="sound-grid" id="soundGrid">
+            <!-- Sound cards will be generated by JavaScript -->
+        </div>
+
+        <h2 class="section-title">Guided Meditations</h2>
+
+        <div class="meditation-grid" id="meditationGrid">
+            <!-- Meditation cards will be generated by JavaScript -->
+        </div>
+
+        <footer>
+            Sounds: Click to toggle, adjust volume with sliders. Mix multiple sounds together.<br>
+            Meditations: Click progress bar to skip. Switch between meditations without losing your place.
+        </footer>
+    </div>
+
+
+    <!-- Preset Sidebar -->
+    <div class="preset-sidebar" id="presetSidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Presets</span>
+            <button class="sidebar-close" onclick="togglePresetSidebar()">&times;</button>
+        </div>
+
+        <div class="sidebar-actions">
+            <button class="sidebar-action-btn primary" onclick="openSavePresetModal()">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+                Save Current Mix
+            </button>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Quick Presets</div>
+            <div id="defaultPresets">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">My Saved Presets</div>
+            <div id="userPresets">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Preset Modal -->
+    <div class="save-preset-modal" id="savePresetModal" onclick="closeSavePresetModal(event)">
+        <div class="save-preset-content" onclick="event.stopPropagation()">
+            <h3>Save Current Mix</h3>
+            <input type="text" id="presetNameInput" placeholder="Name your preset..." maxlength="30">
+            <div class="sidebar-section-title">Choose an icon</div>
+            <div class="save-preset-icons" id="iconPicker">
+                <!-- Generated by JS -->
+            </div>
+            <div class="save-preset-buttons">
+                <button class="cancel-btn" onclick="closeSavePresetModal()">Cancel</button>
+                <button class="save-btn" onclick="saveUserPreset()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sound configuration - using verified working audio sources
+        const SOUND_BASE = 'https://raw.githubusercontent.com/petrovicstefanrs/chillnsound/master/app/sounds/';
+        const MOODIST_BASE = 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/';
+
+        // Combined filter categories (types + situations)
+        const FILTERS = ['All', 'Nature', 'Places', 'Animals', 'Music', 'Noise', 'Binaural', 'Sleep', 'Study', 'Meditation', 'Relaxation', 'Focus'];
+        const FILTER_TYPES = ['Nature', 'Places', 'Animals', 'Music', 'Noise', 'Binaural'];
+        const FILTER_SITUATIONS = ['Sleep', 'Study', 'Meditation', 'Relaxation', 'Focus'];
+
+        // Minimal SVG icons for sounds
+        const ICONS = {
+            rain: '<svg viewBox="0 0 24 24"><path d="M12 3c-3 0-6 2-6 5 0 1.5.5 2.5 1.5 3.5-1.5.5-2.5 2-2.5 3.5 0 2.5 2 4 5 4h4c3 0 5-1.5 5-4 0-1.5-1-3-2.5-3.5 1-.5 1.5-2 1.5-3.5 0-3-3-5-6-5z"/><path d="M8 16v3M12 17v4M16 16v3" stroke-linecap="round"/></svg>',
+            thunder: '<svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>',
+            forest: '<svg viewBox="0 0 24 24"><path d="M12 3l-6 9h3l-4 6h14l-4-6h3l-6-9z"/><path d="M12 18v4"/></svg>',
+            fire: '<svg viewBox="0 0 24 24"><path d="M12 2c-2 3-4 5-4 8 0 3 2 5 4 5s4-2 4-5c0-3-2-5-4-8z"/><path d="M12 10c-1 1.5-2 2.5-2 4 0 1.5 1 2.5 2 2.5s2-1 2-2.5c0-1.5-1-2.5-2-4z"/></svg>',
+            ocean: '<svg viewBox="0 0 24 24"><path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M2 16c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M2 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg>',
+            birds: '<svg viewBox="0 0 24 24"><path d="M4 16c4-6 8-6 12-2l4-2c-2-4-6-6-10-4-4-4-8-2-10 4"/><circle cx="6" cy="13" r="1"/></svg>',
+            stream: '<svg viewBox="0 0 24 24"><path d="M4 6c4 2 8-2 12 0s4 4 4 4"/><path d="M4 12c4 2 8-2 12 0s4 4 4 4"/><path d="M4 18c4 2 8-2 12 0s4 4 4 4"/></svg>',
+            chimes: '<svg viewBox="0 0 24 24"><path d="M12 2v4M8 6l4-2 4 2"/><path d="M8 6v10M12 6v12M16 6v8"/><circle cx="8" cy="18" r="2"/><circle cx="12" cy="20" r="2"/><circle cx="16" cy="16" r="2"/></svg>',
+            bowl: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="16" rx="8" ry="4"/><path d="M4 16c0-4 3-8 8-8s8 4 8 8"/><path d="M12 4v4"/></svg>',
+            temple: '<svg viewBox="0 0 24 24"><path d="M12 2l-8 6v2h16V8l-8-6z"/><path d="M6 10v10h2V10M16 10v10h2V10M11 10v10h2V10"/><path d="M4 20h16"/></svg>',
+            cafe: '<svg viewBox="0 0 24 24"><path d="M4 6h12v8c0 2-2 4-6 4s-6-2-6-4V6z"/><path d="M16 8h2c2 0 3 1 3 3s-1 3-3 3h-2"/><path d="M4 20h12"/></svg>',
+            library: '<svg viewBox="0 0 24 24"><path d="M4 4h2v16H4zM8 4h2v16H8zM12 4h2v16h-2zM16 6l4 2v10l-4 2V6z"/></svg>',
+            cat: '<svg viewBox="0 0 24 24"><path d="M12 18c-4 0-6-2-6-5 0-4 2-7 6-7s6 3 6 7c0 3-2 5-6 5z"/><path d="M6 6l2 4M18 6l-2 4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M12 14v1"/></svg>',
+            whale: '<svg viewBox="0 0 24 24"><path d="M4 12c0-4 4-6 8-6 6 0 8 4 8 6 0 3-4 6-10 6-4 0-6-2-6-6z"/><path d="M20 8c2-2 2-4 2-4"/><circle cx="8" cy="11" r="1"/></svg>',
+            vinyl: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="1"/></svg>',
+            music: '<svg viewBox="0 0 24 24"><path d="M9 18V6l12-3v12"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="15" r="3"/></svg>',
+            keys: '<svg viewBox="0 0 24 24"><path d="M4 4v16h16V4H4z"/><path d="M8 12v8M12 12v8M16 12v8"/><path d="M6 4v8h4V4M10 4v8h4V4M14 4v8h4V4"/></svg>',
+            strings: '<svg viewBox="0 0 24 24"><path d="M6 4c0 8 1 12 3 16M10 4c0 8 1 12 3 16M14 4c0 8 1 12 3 16M18 4c0 8 1 12 3 16"/><path d="M4 8h18M4 12h18M4 16h18"/></svg>',
+            noise: '<svg viewBox="0 0 24 24"><path d="M4 12h2l2-4 2 8 2-6 2 4 2-2 2 3 2-3h2"/></svg>',
+            brain: '<svg viewBox="0 0 24 24"><path d="M12 4c-4 0-6 2-6 6 0 2 1 4 3 5v5h6v-5c2-1 3-3 3-5 0-4-2-6-6-6z"/><path d="M9 10c0-2 1-3 3-3"/><path d="M12 20v2"/></svg>',
+            spiral: '<svg viewBox="0 0 24 24"><path d="M12 12m-2 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0"/><path d="M12 8a4 4 0 0 1 4 4"/><path d="M12 4a8 8 0 0 1 8 8"/><path d="M12 16a4 4 0 0 1-4-4"/><path d="M12 20a8 8 0 0 1-8-8"/></svg>',
+            headphones: '<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0"/><path d="M4 12v6a2 2 0 0 0 2 2h1v-8H4z"/><path d="M20 12v6a2 2 0 0 1-2 2h-1v-8h3z"/></svg>'
+        };
+
+        const sounds = [
+            // Nature & Weather
+            { id: 'rain', name: 'Rain', icon: ICONS.rain, url: SOUND_BASE + 'rain.mp3', type: 'Nature', situations: ['Sleep', 'Study', 'Relaxation'] },
+            { id: 'thunder', name: 'Thunder', icon: ICONS.thunder, url: SOUND_BASE + 'thunder.mp3', type: 'Nature', situations: ['Sleep', 'Relaxation'] },
+            { id: 'forest', name: 'Forest', icon: ICONS.forest, url: SOUND_BASE + 'forest.mp3', type: 'Nature', situations: ['Meditation', 'Relaxation', 'Study'] },
+            { id: 'fire', name: 'Fireplace', icon: ICONS.fire, url: SOUND_BASE + 'fire.mp3', type: 'Nature', situations: ['Sleep', 'Relaxation', 'Study'] },
+            { id: 'ocean', name: 'Beach', icon: ICONS.ocean, url: SOUND_BASE + 'beach.mp3', type: 'Nature', situations: ['Sleep', 'Meditation', 'Relaxation'] },
+            { id: 'birds', name: 'Birds', icon: ICONS.birds, url: SOUND_BASE + 'birds.mp3', type: 'Nature', situations: ['Relaxation', 'Study'] },
+            { id: 'stream', name: 'River', icon: ICONS.stream, url: SOUND_BASE + 'river.mp3', type: 'Nature', situations: ['Sleep', 'Meditation', 'Relaxation'] },
+            { id: 'chimes', name: 'Wind Chimes', icon: ICONS.chimes, url: SOUND_BASE + 'windchimes.mp3', type: 'Nature', situations: ['Meditation', 'Relaxation'] },
+            // Ambient & Places
+            { id: 'singing-bowl', name: 'Singing Bowl', icon: ICONS.bowl, url: MOODIST_BASE + 'things/singing-bowl.mp3', type: 'Music', situations: ['Meditation', 'Relaxation'] },
+            { id: 'temple', name: 'Temple', icon: ICONS.temple, url: MOODIST_BASE + 'places/temple.mp3', type: 'Places', situations: ['Meditation', 'Relaxation'] },
+            { id: 'cafe', name: 'Cafe', icon: ICONS.cafe, url: MOODIST_BASE + 'places/cafe.mp3', type: 'Places', situations: ['Study', 'Focus'] },
+            { id: 'library', name: 'Library', icon: ICONS.library, url: MOODIST_BASE + 'places/library.mp3', type: 'Places', situations: ['Study', 'Focus'] },
+            // Animals
+            { id: 'cat', name: 'Cat Purring', icon: ICONS.cat, url: MOODIST_BASE + 'animals/cat-purring.mp3', type: 'Animals', situations: ['Sleep', 'Relaxation'] },
+            { id: 'whale', name: 'Whale', icon: ICONS.whale, url: MOODIST_BASE + 'animals/whale.mp3', type: 'Animals', situations: ['Sleep', 'Meditation', 'Relaxation'] },
+            // Lo-fi & Music
+            { id: 'vinyl', name: 'Vinyl Crackle', icon: ICONS.vinyl, url: MOODIST_BASE + 'things/vinyl-effect.mp3', type: 'Music', situations: ['Study', 'Relaxation', 'Focus'] },
+            { id: 'lofi-beat', name: 'Lo-Fi Beat', icon: ICONS.music, generated: 'lofi', type: 'Music', situations: ['Study', 'Focus', 'Relaxation'] },
+            { id: 'ambient-pad', name: 'Ambient Pad', icon: ICONS.keys, generated: 'ambient-pad', type: 'Music', situations: ['Sleep', 'Meditation', 'Relaxation'] },
+            { id: 'drone-strings', name: 'Drone Strings', icon: ICONS.strings, generated: 'drone-strings', type: 'Music', situations: ['Meditation', 'Relaxation', 'Sleep'] },
+            // Generated Noise
+            { id: 'whitenoise', name: 'White Noise', icon: ICONS.noise, generated: 'white', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
+            { id: 'pinknoise', name: 'Pink Noise', icon: ICONS.noise, generated: 'pink', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
+            { id: 'brownnoise', name: 'Brown Noise', icon: ICONS.noise, generated: 'brown', type: 'Noise', situations: ['Sleep', 'Focus', 'Relaxation'] },
+            // Binaural Beats
+            { id: 'binaural-alpha', name: 'Alpha Waves', icon: ICONS.brain, generated: 'binaural-alpha', type: 'Binaural', situations: ['Relaxation', 'Focus', 'Study'] },
+            { id: 'binaural-theta', name: 'Theta Waves', icon: ICONS.spiral, generated: 'binaural-theta', type: 'Binaural', situations: ['Meditation', 'Sleep', 'Relaxation'] }
+        ];
+
+        // Current filter state
+        let currentFilter = 'All';
+
+        // Audio context for generated sounds
+        let audioContext = null;
+        const audioElements = {};
+        const gainNodes = {};
+        const generatedSources = {};
+
+        // Initialize audio context on first user interaction
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // Generate noise buffer
+        function generateNoiseBuffer(type) {
+            const bufferSize = audioContext.sampleRate * 2;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+
+            if (type === 'white') {
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+            } else if (type === 'pink') {
+                let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    b0 = 0.99886 * b0 + white * 0.0555179;
+                    b1 = 0.99332 * b1 + white * 0.0750759;
+                    b2 = 0.96900 * b2 + white * 0.1538520;
+                    b3 = 0.86650 * b3 + white * 0.3104856;
+                    b4 = 0.55000 * b4 + white * 0.5329522;
+                    b5 = -0.7616 * b5 - white * 0.0168980;
+                    data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+                    b6 = white * 0.115926;
+                }
+            } else if (type === 'brown') {
+                let lastOut = 0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    data[i] = (lastOut + (0.02 * white)) / 1.02;
+                    lastOut = data[i];
+                    data[i] *= 3.5;
+                }
+            }
+
+            return buffer;
+        }
+
+        // Generate binaural beat (requires stereo - two slightly different frequencies)
+        function createBinauralBeat(type, volume) {
+            const baseFreq = 200; // Base carrier frequency
+            let beatFreq;
+
+            if (type === 'binaural-alpha') {
+                beatFreq = 10; // 10Hz for alpha waves (relaxation, calm focus)
+            } else if (type === 'binaural-theta') {
+                beatFreq = 4; // 4Hz for theta waves (deep meditation, creativity)
+            } else {
+                beatFreq = 10;
+            }
+
+            // Create oscillators for left and right ear
+            const leftOsc = audioContext.createOscillator();
+            const rightOsc = audioContext.createOscillator();
+
+            leftOsc.type = 'sine';
+            rightOsc.type = 'sine';
+
+            leftOsc.frequency.value = baseFreq;
+            rightOsc.frequency.value = baseFreq + beatFreq;
+
+            // Create gain nodes for volume control
+            const leftGain = audioContext.createGain();
+            const rightGain = audioContext.createGain();
+            leftGain.gain.value = volume;
+            rightGain.gain.value = volume;
+
+            // Create stereo panner to separate left and right
+            const merger = audioContext.createChannelMerger(2);
+
+            // Connect left oscillator to left channel
+            leftOsc.connect(leftGain);
+            leftGain.connect(merger, 0, 0);
+
+            // Connect right oscillator to right channel
+            rightOsc.connect(rightGain);
+            rightGain.connect(merger, 0, 1);
+
+            // Connect to output
+            merger.connect(audioContext.destination);
+
+            // Start oscillators
+            leftOsc.start();
+            rightOsc.start();
+
+            return {
+                leftOsc,
+                rightOsc,
+                leftGain,
+                rightGain,
+                stop: function() {
+                    leftOsc.stop();
+                    rightOsc.stop();
+                },
+                setVolume: function(vol) {
+                    leftGain.gain.value = vol;
+                    rightGain.gain.value = vol;
+                }
+            };
+        }
+
+        // Generate ambient pad (warm, evolving synth pad)
+        function createAmbientPad(volume) {
+            const masterGain = audioContext.createGain();
+            masterGain.gain.value = volume * 0.5;
+
+            const oscillators = [];
+            const gains = [];
+
+            // Create multiple detuned oscillators for rich pad sound
+            const baseFreq = 110; // A2
+            const frequencies = [baseFreq, baseFreq * 1.5, baseFreq * 2, baseFreq * 3];
+            const detunes = [-5, 3, -7, 5];
+
+            frequencies.forEach((freq, i) => {
+                const osc = audioContext.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                osc.detune.value = detunes[i];
+
+                const gain = audioContext.createGain();
+                gain.gain.value = 0.3 / frequencies.length;
+
+                // Add subtle LFO for movement
+                const lfo = audioContext.createOscillator();
+                lfo.type = 'sine';
+                lfo.frequency.value = 0.1 + (i * 0.05);
+                const lfoGain = audioContext.createGain();
+                lfoGain.gain.value = 3;
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.detune);
+                lfo.start();
+
+                osc.connect(gain);
+                gain.connect(masterGain);
+                osc.start();
+
+                oscillators.push(osc, lfo);
+                gains.push(gain);
+            });
+
+            // Low-pass filter for warmth
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 800;
+            filter.Q.value = 0.5;
+
+            masterGain.connect(filter);
+            filter.connect(audioContext.destination);
+
+            return {
+                stop: function() {
+                    oscillators.forEach(o => o.stop());
+                },
+                setVolume: function(vol) {
+                    masterGain.gain.value = vol * 0.5;
+                }
+            };
+        }
+
+        // Generate lo-fi beat (simple drum pattern with vinyl warmth)
+        function createLofiBeat(volume) {
+            const masterGain = audioContext.createGain();
+            masterGain.gain.value = volume * 0.4;
+            masterGain.connect(audioContext.destination);
+
+            const bpm = 75;
+            const beatInterval = 60 / bpm;
+            let isPlaying = true;
+            let nextBeatTime = audioContext.currentTime;
+
+            function playKick(time) {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, time);
+                osc.frequency.exponentialRampToValueAtTime(40, time + 0.1);
+                gain.gain.setValueAtTime(0.8, time);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.3);
+                osc.connect(gain);
+                gain.connect(masterGain);
+                osc.start(time);
+                osc.stop(time + 0.3);
+            }
+
+            function playSnare(time) {
+                // Noise burst for snare
+                const bufferSize = audioContext.sampleRate * 0.15;
+                const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
+                }
+                const noise = audioContext.createBufferSource();
+                noise.buffer = buffer;
+                const gain = audioContext.createGain();
+                gain.gain.setValueAtTime(0.3, time);
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.value = 1000;
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+                noise.start(time);
+            }
+
+            function playHihat(time) {
+                const bufferSize = audioContext.sampleRate * 0.05;
+                const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.1));
+                }
+                const noise = audioContext.createBufferSource();
+                noise.buffer = buffer;
+                const gain = audioContext.createGain();
+                gain.gain.setValueAtTime(0.15, time);
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.value = 5000;
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+                noise.start(time);
+            }
+
+            function scheduler() {
+                while (nextBeatTime < audioContext.currentTime + 0.1) {
+                    if (!isPlaying) return;
+                    const beatInBar = Math.floor((nextBeatTime / beatInterval) % 8);
+                    // Lo-fi pattern: kick on 1, 5; snare on 3, 7; hihats on all
+                    if (beatInBar === 0 || beatInBar === 4) playKick(nextBeatTime);
+                    if (beatInBar === 2 || beatInBar === 6) playSnare(nextBeatTime);
+                    playHihat(nextBeatTime);
+                    nextBeatTime += beatInterval / 2;
+                }
+                if (isPlaying) setTimeout(scheduler, 50);
+            }
+
+            scheduler();
+
+            return {
+                stop: function() {
+                    isPlaying = false;
+                },
+                setVolume: function(vol) {
+                    masterGain.gain.value = vol * 0.4;
+                }
+            };
+        }
+
+        // Generate drone strings (dark, cinematic string drone)
+        function createDroneStrings(volume) {
+            const masterGain = audioContext.createGain();
+            masterGain.gain.value = volume * 0.4;
+
+            const oscillators = [];
+
+            // Deep cello-like frequencies (C2, G2, C3)
+            const frequencies = [65.41, 98, 130.81];
+
+            frequencies.forEach((freq, i) => {
+                // Main oscillator (sawtooth for string-like harmonics)
+                const osc = audioContext.createOscillator();
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+
+                // Slight detune for thickness
+                const osc2 = audioContext.createOscillator();
+                osc2.type = 'sawtooth';
+                osc2.frequency.value = freq * 1.002;
+
+                // Slow vibrato LFO
+                const lfo = audioContext.createOscillator();
+                lfo.type = 'sine';
+                lfo.frequency.value = 4 + (i * 0.5);
+                const lfoGain = audioContext.createGain();
+                lfoGain.gain.value = 2;
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+
+                const gain = audioContext.createGain();
+                gain.gain.value = 0.15 / frequencies.length;
+
+                osc.connect(gain);
+                osc2.connect(gain);
+                gain.connect(masterGain);
+
+                osc.start();
+                osc2.start();
+                lfo.start();
+
+                oscillators.push(osc, osc2, lfo);
+            });
+
+            // Low-pass filter for warmth (removes harsh highs)
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 600;
+            filter.Q.value = 0.7;
+
+            masterGain.connect(filter);
+            filter.connect(audioContext.destination);
+
+            return {
+                stop: function() {
+                    oscillators.forEach(o => o.stop());
+                },
+                setVolume: function(vol) {
+                    masterGain.gain.value = vol * 0.4;
+                }
+            };
+        }
+
+        // Create sound card HTML
+        function createSoundCard(sound) {
+            const card = document.createElement('div');
+            card.className = 'sound-card';
+            card.dataset.sound = sound.id;
+            card.dataset.type = sound.type;
+            card.dataset.situations = sound.situations.join(',');
+            // Generated noises are louder, so default to lower volume
+            const defaultVolume = sound.generated ? 25 : 50;
+
+            // Binaural tooltip for binaural beats
+            const isBinaural = sound.type === 'Binaural';
+            const binauralTooltip = isBinaural ? `
+                <span class="info-trigger">i</span>
+                <div class="info-tooltip">
+                    <strong>${sound.id === 'binaural-alpha' ? 'Alpha Waves (10Hz)' : 'Theta Waves (4Hz)'}</strong>
+                    ${sound.id === 'binaural-alpha'
+                        ? 'Promotes relaxation, calm focus, and light meditation. Great for reducing anxiety.'
+                        : 'Supports deep meditation, creativity, and drowsiness. Ideal before sleep.'}
+                    <div class="headphones-note">
+                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M4 12a8 8 0 0 1 16 0"/><path d="M4 12v6a2 2 0 0 0 2 2h1v-8H4z"/><path d="M20 12v6a2 2 0 0 1-2 2h-1v-8h3z"/></svg>
+                        Headphones required
+                    </div>
+                </div>
+            ` : '';
+
+            card.innerHTML = `
+                ${binauralTooltip}
+                <span class="sound-icon">${sound.icon}</span>
+                <div class="sound-name">${sound.name}</div>
+                <input type="range" class="volume-slider" min="0" max="100" value="${defaultVolume}"
+                       onclick="event.stopPropagation()">
+            `;
+            return card;
+        }
+
+        // Initialize filter buttons
+        function initFilters() {
+            const container = document.getElementById('allFilters');
+
+            FILTERS.forEach((filter, index) => {
+                // Add divider after "Binaural" to separate types from situations
+                if (filter === 'Sleep') {
+                    const divider = document.createElement('span');
+                    divider.className = 'filter-divider';
+                    container.appendChild(divider);
+                }
+
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn' + (filter === 'All' ? ' active' : '');
+                btn.textContent = filter;
+                btn.onclick = () => setFilter(filter);
+                container.appendChild(btn);
+            });
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('#allFilters .filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === filter);
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            document.querySelectorAll('.sound-card').forEach(card => {
+                const cardType = card.dataset.type;
+                const cardSituations = card.dataset.situations.split(',');
+
+                let matches = false;
+                if (currentFilter === 'All') {
+                    matches = true;
+                } else if (FILTER_TYPES.includes(currentFilter)) {
+                    matches = cardType === currentFilter;
+                } else if (FILTER_SITUATIONS.includes(currentFilter)) {
+                    matches = cardSituations.includes(currentFilter);
+                }
+
+                card.classList.toggle('hidden', !matches);
+            });
+        }
+
+        // ==================== PRESETS SYSTEM ====================
+
+        // Predefined activity-based presets
+        const DEFAULT_PRESETS = [
+            {
+                id: 'sleep',
+                name: 'Deep Sleep',
+                icon: '◐',
+                sounds: [
+                    { id: 'rain', volume: 55 },
+                    { id: 'brownnoise', volume: 25 },
+                    { id: 'cat', volume: 35 }
+                ]
+            },
+            {
+                id: 'study',
+                name: 'Study Focus',
+                icon: '◈',
+                sounds: [
+                    { id: 'cafe', volume: 40 },
+                    { id: 'lofi-beat', volume: 30 },
+                    { id: 'vinyl', volume: 20 }
+                ]
+            },
+            {
+                id: 'meditation',
+                name: 'Meditation',
+                icon: '◎',
+                sounds: [
+                    { id: 'singing-bowl', volume: 45 },
+                    { id: 'binaural-theta', volume: 20 },
+                    { id: 'stream', volume: 35 }
+                ]
+            },
+            {
+                id: 'work',
+                name: 'Deep Work',
+                icon: '▣',
+                sounds: [
+                    { id: 'library', volume: 50 },
+                    { id: 'pinknoise', volume: 20 }
+                ]
+            },
+            {
+                id: 'relax',
+                name: 'Relaxation',
+                icon: '❋',
+                sounds: [
+                    { id: 'forest', volume: 50 },
+                    { id: 'birds', volume: 35 },
+                    { id: 'stream', volume: 40 }
+                ]
+            },
+            {
+                id: 'cozy',
+                name: 'Cozy Evening',
+                icon: '◇',
+                sounds: [
+                    { id: 'rain', volume: 45 },
+                    { id: 'fire', volume: 50 },
+                    { id: 'thunder', volume: 25 }
+                ]
+            },
+            {
+                id: 'ocean',
+                name: 'Beach Vibes',
+                icon: '≋',
+                sounds: [
+                    { id: 'ocean', volume: 60 },
+                    { id: 'birds', volume: 25 }
+                ]
+            },
+            {
+                id: 'creative',
+                name: 'Creative Flow',
+                icon: '✧',
+                sounds: [
+                    { id: 'ambient-pad', volume: 30 },
+                    { id: 'cafe', volume: 35 },
+                    { id: 'binaural-alpha', volume: 15 }
+                ]
+            }
+        ];
+
+        const PRESET_ICONS = ['◐', '◈', '◎', '▣', '❋', '◇', '≋', '✧', '○', '◆', '△', '▽', '☆', '♢', '✦', '◌'];
+        const USER_PRESETS_KEY = 'calmUserPresets';
+        let selectedPresetIcon = '◆';
+        let activePresetId = null;
+
+        // Get user presets from localStorage
+        function getUserPresets() {
+            const data = localStorage.getItem(USER_PRESETS_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Save user presets to localStorage
+        function saveUserPresetsToStorage(presets) {
+            localStorage.setItem(USER_PRESETS_KEY, JSON.stringify(presets));
+        }
+
+        // Toggle sidebar
+        function togglePresetSidebar() {
+            const sidebar = document.getElementById('presetSidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Render preset card
+        function createPresetCard(preset, isUserPreset = false) {
+            const soundNames = preset.sounds.map(s => {
+                const sound = sounds.find(snd => snd.id === s.id);
+                return sound ? sound.name : s.id;
+            }).join(', ');
+
+            const card = document.createElement('div');
+            card.className = 'preset-card' + (activePresetId === preset.id ? ' active' : '');
+            card.innerHTML = `
+                <div class="preset-card-header">
+                    <span class="preset-icon">${preset.icon}</span>
+                    <span class="preset-name">${preset.name}</span>
+                    ${isUserPreset ? `<button class="preset-delete" onclick="event.stopPropagation(); deleteUserPreset('${preset.id}')" title="Delete">&times;</button>` : ''}
+                </div>
+                <div class="preset-sounds">${soundNames}</div>
+            `;
+            card.onclick = () => loadPreset(preset);
+            return card;
+        }
+
+        // Render all presets
+        function renderPresets() {
+            const defaultContainer = document.getElementById('defaultPresets');
+            const userContainer = document.getElementById('userPresets');
+
+            // Default presets
+            defaultContainer.innerHTML = '';
+            DEFAULT_PRESETS.forEach(preset => {
+                defaultContainer.appendChild(createPresetCard(preset, false));
+            });
+
+            // User presets
+            const userPresets = getUserPresets();
+            userContainer.innerHTML = '';
+            if (userPresets.length === 0) {
+                userContainer.innerHTML = '<div class="no-presets">No saved presets yet.<br>Create your perfect mix and save it!</div>';
+            } else {
+                userPresets.forEach(preset => {
+                    userContainer.appendChild(createPresetCard(preset, true));
+                });
+            }
+        }
+
+        // Load a preset
+        function loadPreset(preset) {
+            // Stop all current sounds
+            stopAllSounds();
+
+            // Reset filters to show all
+            setTypeFilter('All');
+            setSituationFilter('All');
+
+            // Activate preset sounds with their volumes
+            preset.sounds.forEach(presetSound => {
+                const card = document.querySelector(`[data-sound="${presetSound.id}"]`);
+                if (card) {
+                    const slider = card.querySelector('.volume-slider');
+                    slider.value = presetSound.volume;
+                    toggleSound(presetSound.id, card);
+                }
+            });
+
+            activePresetId = preset.id;
+            renderPresets();
+        }
+
+        // Stop all sounds
+        function stopAllSounds() {
+            document.querySelectorAll('.sound-card.active').forEach(card => {
+                const soundId = card.dataset.sound;
+                toggleSound(soundId, card);
+            });
+            activePresetId = null;
+        }
+
+        // Get current sound configuration
+        function getCurrentSoundConfig() {
+            const config = [];
+            document.querySelectorAll('.sound-card.active').forEach(card => {
+                const soundId = card.dataset.sound;
+                const slider = card.querySelector('.volume-slider');
+                config.push({ id: soundId, volume: parseInt(slider.value) });
+            });
+            return config;
+        }
+
+        // Open save preset modal
+        function openSavePresetModal() {
+            const currentConfig = getCurrentSoundConfig();
+            if (currentConfig.length === 0) {
+                alert('Play some sounds first to save a preset!');
+                return;
+            }
+
+            // Render icon picker
+            const iconPicker = document.getElementById('iconPicker');
+            iconPicker.innerHTML = '';
+            PRESET_ICONS.forEach(icon => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'icon-option' + (icon === selectedPresetIcon ? ' selected' : '');
+                btn.textContent = icon;
+                btn.onclick = () => selectPresetIcon(icon);
+                iconPicker.appendChild(btn);
+            });
+
+            document.getElementById('presetNameInput').value = '';
+            document.getElementById('savePresetModal').classList.add('visible');
+        }
+
+        // Close save preset modal
+        function closeSavePresetModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('savePresetModal').classList.remove('visible');
+        }
+
+        // Select preset icon
+        function selectPresetIcon(icon) {
+            selectedPresetIcon = icon;
+            document.querySelectorAll('.icon-option').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === icon);
+            });
+        }
+
+        // Save user preset
+        function saveUserPreset() {
+            const name = document.getElementById('presetNameInput').value.trim();
+            if (!name) {
+                alert('Please enter a name for your preset');
+                return;
+            }
+
+            const config = getCurrentSoundConfig();
+            const userPresets = getUserPresets();
+
+            const newPreset = {
+                id: 'user_' + Date.now(),
+                name: name,
+                icon: selectedPresetIcon,
+                sounds: config
+            };
+
+            userPresets.push(newPreset);
+            saveUserPresetsToStorage(userPresets);
+
+            closeSavePresetModal();
+            renderPresets();
+        }
+
+        // Delete user preset
+        function deleteUserPreset(presetId) {
+            if (!confirm('Delete this preset?')) return;
+
+            const userPresets = getUserPresets().filter(p => p.id !== presetId);
+            saveUserPresetsToStorage(userPresets);
+
+            if (activePresetId === presetId) {
+                activePresetId = null;
+            }
+            renderPresets();
+        }
+
+        // Randomize sounds (respects current filter)
+        function randomizeSounds() {
+            stopAllSounds();
+
+            // Get visible sounds based on current filter
+            const visibleCards = Array.from(document.querySelectorAll('.sound-card:not(.hidden)'));
+
+            if (visibleCards.length === 0) {
+                alert('No sounds match current filter');
+                return;
+            }
+
+            // Randomly select 2-4 sounds
+            const numSounds = Math.floor(Math.random() * 3) + 2; // 2-4 sounds
+            const shuffled = visibleCards.sort(() => Math.random() - 0.5);
+            const selected = shuffled.slice(0, Math.min(numSounds, visibleCards.length));
+
+            // Activate selected sounds with random volumes
+            selected.forEach(card => {
+                const soundId = card.dataset.sound;
+                const slider = card.querySelector('.volume-slider');
+                const randomVolume = Math.floor(Math.random() * 40) + 30; // 30-70
+                slider.value = randomVolume;
+                toggleSound(soundId, card);
+            });
+
+            activePresetId = null;
+            renderPresets();
+        }
+
+        // Initialize presets
+        function initPresets() {
+            renderPresets();
+
+            // Close sidebar with escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const sidebar = document.getElementById('presetSidebar');
+                    if (sidebar.classList.contains('open')) {
+                        togglePresetSidebar();
+                    }
+                    closeSavePresetModal();
+                }
+            });
+        }
+
+        // Initialize sounds
+        function initSounds() {
+            const grid = document.getElementById('soundGrid');
+
+            sounds.forEach(sound => {
+                const card = createSoundCard(sound);
+                grid.appendChild(card);
+
+                if (sound.generated) {
+                    // Generated noise - will be created when activated
+                    audioElements[sound.id] = { type: 'generated', noiseType: sound.generated };
+                } else {
+                    // Audio file
+                    const audio = new Audio();
+                    audio.src = sound.url;
+                    audio.loop = true;
+                    audio.preload = 'auto';
+                    audio.volume = 0.5 * 0.7; // 50% individual * 70% master
+                    audioElements[sound.id] = { type: 'file', audio };
+                }
+
+                // Card click handler
+                card.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('volume-slider')) return;
+                    toggleSound(sound.id, card);
+                });
+
+                // Volume slider handler
+                const slider = card.querySelector('.volume-slider');
+                slider.addEventListener('input', (e) => {
+                    updateVolume(sound.id, e.target.value);
+                });
+            });
+        }
+
+        // Toggle sound on/off
+        function toggleSound(soundId, card) {
+            initAudioContext();
+
+            const soundData = audioElements[soundId];
+            const isActive = card.classList.contains('active');
+
+            if (isActive) {
+                // Turn off
+                card.classList.remove('active');
+                if (soundData.type === 'file') {
+                    soundData.audio.pause();
+                } else if (soundData.type === 'generated' && generatedSources[soundId]) {
+                    // Check if it's a binaural beat or regular noise
+                    if (generatedSources[soundId].stop) {
+                        generatedSources[soundId].stop();
+                    } else {
+                        generatedSources[soundId].source.stop();
+                    }
+                    delete generatedSources[soundId];
+                }
+            } else {
+                // Turn on
+                card.classList.add('active');
+                const slider = card.querySelector('.volume-slider');
+                const volume = slider.value / 100;
+                const masterVolume = document.getElementById('masterVolume').value / 100;
+
+                if (soundData.type === 'file') {
+                    soundData.audio.volume = volume * masterVolume;
+                    soundData.audio.play().catch(e => console.log('Audio play failed:', e));
+                } else if (soundData.type === 'generated') {
+                    // Check the type of generated sound
+                    if (soundData.noiseType.startsWith('binaural')) {
+                        const binaural = createBinauralBeat(soundData.noiseType, volume * masterVolume);
+                        generatedSources[soundId] = binaural;
+                    } else if (soundData.noiseType === 'ambient-pad') {
+                        const pad = createAmbientPad(volume * masterVolume);
+                        generatedSources[soundId] = pad;
+                    } else if (soundData.noiseType === 'lofi') {
+                        const lofi = createLofiBeat(volume * masterVolume);
+                        generatedSources[soundId] = lofi;
+                    } else if (soundData.noiseType === 'drone-strings') {
+                        const drone = createDroneStrings(volume * masterVolume);
+                        generatedSources[soundId] = drone;
+                    } else {
+                        // Create generated noise (white, pink, brown)
+                        const buffer = generateNoiseBuffer(soundData.noiseType);
+                        const source = audioContext.createBufferSource();
+                        source.buffer = buffer;
+                        source.loop = true;
+
+                        const gainNode = audioContext.createGain();
+                        gainNode.gain.value = volume * masterVolume;
+
+                        source.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        source.start();
+
+                        generatedSources[soundId] = { source, gainNode };
+                    }
+                }
+            }
+        }
+
+        // Update individual sound volume
+        function updateVolume(soundId, value) {
+            const volume = value / 100;
+            const masterVolume = document.getElementById('masterVolume').value / 100;
+            const soundData = audioElements[soundId];
+
+            if (soundData.type === 'file') {
+                soundData.audio.volume = volume * masterVolume;
+            } else if (generatedSources[soundId]) {
+                // Check if it's a binaural beat or regular noise
+                if (generatedSources[soundId].setVolume) {
+                    generatedSources[soundId].setVolume(volume * masterVolume);
+                } else {
+                    generatedSources[soundId].gainNode.gain.value = volume * masterVolume;
+                }
+            }
+        }
+
+        // Update master volume
+        function updateMasterVolume(value) {
+            const masterVolume = value / 100;
+
+            sounds.forEach(sound => {
+                const card = document.querySelector(`[data-sound="${sound.id}"]`);
+                const slider = card.querySelector('.volume-slider');
+                const volume = slider.value / 100;
+                const soundData = audioElements[sound.id];
+
+                if (soundData.type === 'file') {
+                    soundData.audio.volume = volume * masterVolume;
+                } else if (generatedSources[sound.id]) {
+                    // Check if it's a binaural beat or regular noise
+                    if (generatedSources[sound.id].setVolume) {
+                        generatedSources[sound.id].setVolume(volume * masterVolume);
+                    } else {
+                        generatedSources[sound.id].gainNode.gain.value = volume * masterVolume;
+                    }
+                }
+            });
+        }
+
+        // ==================== MEDITATION SECTION ====================
+
+        // Meditation SVG icons
+        const MEDITATION_ICONS = {
+            bodyscan: '<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 7v4l-3 4v6M12 11l3 4v6"/><path d="M9 11h6"/></svg>',
+            breathing: '<svg viewBox="0 0 24 24"><path d="M12 4c-3 3-6 6-6 10a6 6 0 0 0 12 0c0-4-3-7-6-10z"/><path d="M12 8c-1.5 1.5-3 3-3 5a3 3 0 0 0 6 0c0-2-1.5-3.5-3-5z"/></svg>',
+            sleep: '<svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>'
+        };
+
+        // Meditation configuration - Voice only, no background music
+        const meditations = [
+            {
+                id: 'bodyscan',
+                name: 'Body Scan',
+                icon: MEDITATION_ICONS.bodyscan,
+                url: 'https://palousemindfulness.com/disks/bodyscan20min.mp3',
+                duration: 1200 // 20 minutes in seconds
+            },
+            {
+                id: 'breathing',
+                name: 'Deep Breathing',
+                icon: MEDITATION_ICONS.breathing,
+                url: 'https://d1cy5zxxhbcbkk.cloudfront.net/guided-meditations/01_Breathing_Meditation.mp3',
+                duration: 300 // 5 minutes
+            },
+            {
+                id: 'sleep',
+                name: 'Sleep Meditation',
+                icon: MEDITATION_ICONS.sleep,
+                url: 'https://d1cy5zxxhbcbkk.cloudfront.net/guided-meditations/05_Loving_Kindness_Meditation.mp3',
+                duration: 540 // 9 minutes
+            }
+        ];
+
+        const meditationAudio = {};
+        let activeMeditation = null;
+        let meditationTimer = null;
+
+        // Format seconds to MM:SS
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Create meditation card HTML
+        function createMeditationCard(meditation) {
+            const card = document.createElement('div');
+            card.className = 'meditation-card';
+            card.dataset.meditation = meditation.id;
+            card.innerHTML = `
+                <div class="meditation-header">
+                    <span class="meditation-icon">${meditation.icon}</span>
+                    <div class="meditation-info">
+                        <div class="meditation-name">${meditation.name}</div>
+                        <div class="meditation-duration">${formatTime(meditation.duration)}</div>
+                    </div>
+                    <button class="play-pause-btn" onclick="event.stopPropagation(); toggleMeditation('${meditation.id}')">
+                        <span class="play-icon">▶</span>
+                    </button>
+                </div>
+                <div class="meditation-controls">
+                    <input type="range" class="meditation-volume volume-slider" min="0" max="100" value="70"
+                           onclick="event.stopPropagation()" data-meditation="${meditation.id}">
+                    <div class="loop-selector">
+                        <button class="loop-btn active" data-loops="1" onclick="event.stopPropagation(); setLoop('${meditation.id}', 1)">1x</button>
+                        <button class="loop-btn" data-loops="2" onclick="event.stopPropagation(); setLoop('${meditation.id}', 2)">2x</button>
+                        <button class="loop-btn" data-loops="0" onclick="event.stopPropagation(); setLoop('${meditation.id}', 0)">∞</button>
+                    </div>
+                </div>
+                <div class="meditation-timer">
+                    <span class="timer-display timer-elapsed">0:00</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <span class="timer-display timer-remaining">${formatTime(meditation.duration)}</span>
+                </div>
+            `;
+            return card;
+        }
+
+        // Initialize meditations
+        function initMeditations() {
+            const grid = document.getElementById('meditationGrid');
+
+            meditations.forEach(meditation => {
+                const card = createMeditationCard(meditation);
+                grid.appendChild(card);
+
+                // Create audio element
+                const audio = new Audio();
+                audio.src = meditation.url;
+                audio.preload = 'metadata';
+                audio.volume = 0.7;
+
+                meditationAudio[meditation.id] = {
+                    audio: audio,
+                    loops: 1,
+                    currentLoop: 1,
+                    duration: meditation.duration
+                };
+
+                // Volume slider handler
+                const slider = card.querySelector('.meditation-volume');
+                slider.addEventListener('input', (e) => {
+                    meditationAudio[meditation.id].audio.volume = e.target.value / 100;
+                });
+
+                // Audio ended handler for looping
+                audio.addEventListener('ended', () => {
+                    handleMeditationEnded(meditation.id);
+                });
+
+                // Update duration when metadata loads
+                audio.addEventListener('loadedmetadata', () => {
+                    if (audio.duration && !isNaN(audio.duration)) {
+                        meditationAudio[meditation.id].duration = audio.duration;
+                        const card = document.querySelector(`[data-meditation="${meditation.id}"]`);
+                        card.querySelector('.meditation-duration').textContent = formatTime(audio.duration);
+                        card.querySelector('.timer-remaining').textContent = formatTime(audio.duration);
+                    }
+                });
+
+                // Card click handler
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.meditation-controls') || e.target.closest('.play-pause-btn') || e.target.closest('.progress-bar')) return;
+                    toggleMeditation(meditation.id);
+                });
+
+                // Progress bar click handler for seeking
+                const progressBar = card.querySelector('.progress-bar');
+                progressBar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const rect = progressBar.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const percentage = (clickX / rect.width) * 100;
+                    seekMeditation(meditation.id, percentage);
+                });
+            });
+        }
+
+        // Toggle meditation playback
+        function toggleMeditation(meditationId) {
+            const medData = meditationAudio[meditationId];
+            const card = document.querySelector(`[data-meditation="${meditationId}"]`);
+            const playBtn = card.querySelector('.play-icon');
+
+            if (activeMeditation === meditationId) {
+                // Pause/resume current meditation
+                if (medData.audio.paused) {
+                    medData.audio.play();
+                    playBtn.textContent = '⏸';
+                    startMeditationTimer(meditationId);
+                } else {
+                    medData.audio.pause();
+                    playBtn.textContent = '▶';
+                    stopMeditationTimer();
+                }
+            } else {
+                // Pause any playing meditation (keep its position)
+                if (activeMeditation) {
+                    pauseMeditation(activeMeditation);
+                }
+
+                // Start/resume this meditation
+                activeMeditation = meditationId;
+
+                // If starting fresh (position is 0), reset loop counter
+                if (medData.audio.currentTime === 0) {
+                    medData.currentLoop = 1;
+                }
+
+                medData.audio.play().catch(e => console.log('Meditation play failed:', e));
+
+                card.classList.add('active');
+                playBtn.textContent = '⏸';
+                startMeditationTimer(meditationId);
+            }
+        }
+
+        // Pause meditation (keeps position)
+        function pauseMeditation(meditationId) {
+            const medData = meditationAudio[meditationId];
+            const card = document.querySelector(`[data-meditation="${meditationId}"]`);
+            const playBtn = card.querySelector('.play-icon');
+
+            medData.audio.pause();
+            card.classList.remove('active');
+            playBtn.textContent = '▶';
+
+            // Update display one more time to show paused position
+            updateMeditationProgress(meditationId);
+
+            stopMeditationTimer();
+        }
+
+        // Stop meditation (resets position)
+        function stopMeditation(meditationId) {
+            const medData = meditationAudio[meditationId];
+            const card = document.querySelector(`[data-meditation="${meditationId}"]`);
+            const playBtn = card.querySelector('.play-icon');
+
+            medData.audio.pause();
+            medData.audio.currentTime = 0;
+            medData.currentLoop = 1;
+
+            card.classList.remove('active');
+            playBtn.textContent = '▶';
+
+            // Reset timer display
+            card.querySelector('.timer-elapsed').textContent = '0:00';
+            card.querySelector('.timer-remaining').textContent = formatTime(medData.duration);
+            card.querySelector('.progress-fill').style.width = '0%';
+
+            if (activeMeditation === meditationId) {
+                activeMeditation = null;
+            }
+            stopMeditationTimer();
+        }
+
+        // Seek to position in meditation
+        function seekMeditation(meditationId, percentage) {
+            const medData = meditationAudio[meditationId];
+            const newTime = (percentage / 100) * medData.duration;
+            medData.audio.currentTime = newTime;
+            updateMeditationProgress(meditationId);
+        }
+
+        // Handle meditation ended (for looping)
+        function handleMeditationEnded(meditationId) {
+            const medData = meditationAudio[meditationId];
+
+            if (medData.loops === 0) {
+                // Infinite loop
+                medData.audio.currentTime = 0;
+                medData.audio.play();
+            } else if (medData.currentLoop < medData.loops) {
+                // More loops remaining
+                medData.currentLoop++;
+                medData.audio.currentTime = 0;
+                medData.audio.play();
+            } else {
+                // Done with all loops
+                stopMeditation(meditationId);
+            }
+        }
+
+        // Set loop count
+        function setLoop(meditationId, loops) {
+            meditationAudio[meditationId].loops = loops;
+
+            // Update button states
+            const card = document.querySelector(`[data-meditation="${meditationId}"]`);
+            card.querySelectorAll('.loop-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.loops) === loops);
+            });
+        }
+
+        // Start meditation timer
+        function startMeditationTimer(meditationId) {
+            stopMeditationTimer();
+
+            meditationTimer = setInterval(() => {
+                updateMeditationProgress(meditationId);
+            }, 100);
+        }
+
+        // Stop meditation timer
+        function stopMeditationTimer() {
+            if (meditationTimer) {
+                clearInterval(meditationTimer);
+                meditationTimer = null;
+            }
+        }
+
+        // Update meditation progress display
+        function updateMeditationProgress(meditationId) {
+            const medData = meditationAudio[meditationId];
+            const card = document.querySelector(`[data-meditation="${meditationId}"]`);
+
+            if (!card) return;
+
+            const currentTime = medData.audio.currentTime;
+            const duration = medData.duration;
+            const remaining = Math.max(0, duration - currentTime);
+            const progress = (currentTime / duration) * 100;
+
+            card.querySelector('.timer-elapsed').textContent = formatTime(currentTime);
+            card.querySelector('.timer-remaining').textContent = formatTime(remaining);
+            card.querySelector('.progress-fill').style.width = `${progress}%`;
+        }
+
+        // ==================== SLEEP TIMER SECTION ====================
+
+        let sleepTimerInterval = null;
+        let sleepTimerRemaining = 0;
+        let fadeOutInterval = null;
+        const FADE_DURATION = 60; // seconds to fade out
+
+        // Toggle sleep timer dropdown
+        function toggleSleepTimerDropdown() {
+            const dropdown = document.getElementById('sleepTimerDropdown');
+            dropdown.classList.toggle('show');
+
+            // Close dropdown when clicking outside
+            if (dropdown.classList.contains('show')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeSleepTimerDropdown);
+                }, 0);
+            }
+        }
+
+        function closeSleepTimerDropdown(e) {
+            const wrapper = document.querySelector('.sleep-timer-wrapper');
+            if (!wrapper.contains(e.target)) {
+                document.getElementById('sleepTimerDropdown').classList.remove('show');
+                document.removeEventListener('click', closeSleepTimerDropdown);
+            }
+        }
+
+        // Start sleep timer
+        function startSleepTimer(minutes) {
+            // Hide dropdown
+            document.getElementById('sleepTimerDropdown').classList.remove('show');
+
+            // Cancel any existing timer
+            if (sleepTimerInterval) {
+                clearInterval(sleepTimerInterval);
+            }
+            if (fadeOutInterval) {
+                clearInterval(fadeOutInterval);
+                fadeOutInterval = null;
+            }
+
+            sleepTimerRemaining = minutes * 60;
+
+            // Update UI
+            document.getElementById('sleepTimerBtn').classList.add('active');
+            document.getElementById('sleepTimerDisplay').classList.add('active');
+            updateSleepTimerDisplay();
+
+            // Start countdown
+            sleepTimerInterval = setInterval(() => {
+                sleepTimerRemaining--;
+
+                if (sleepTimerRemaining <= 0) {
+                    // Timer finished - stop everything
+                    stopAllAudio();
+                    cancelSleepTimer();
+                } else if (sleepTimerRemaining <= FADE_DURATION && !fadeOutInterval) {
+                    // Start fading out
+                    startFadeOut();
+                }
+
+                updateSleepTimerDisplay();
+            }, 1000);
+        }
+
+        // Update sleep timer display
+        function updateSleepTimerDisplay() {
+            const mins = Math.floor(sleepTimerRemaining / 60);
+            const secs = sleepTimerRemaining % 60;
+            document.getElementById('sleepTimerCountdown').textContent =
+                `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Cancel sleep timer
+        function cancelSleepTimer() {
+            if (sleepTimerInterval) {
+                clearInterval(sleepTimerInterval);
+                sleepTimerInterval = null;
+            }
+            if (fadeOutInterval) {
+                clearInterval(fadeOutInterval);
+                fadeOutInterval = null;
+            }
+
+            sleepTimerRemaining = 0;
+
+            // Reset UI
+            document.getElementById('sleepTimerBtn').classList.remove('active');
+            document.getElementById('sleepTimerDisplay').classList.remove('active');
+
+            // Reset master volume to original value
+            document.getElementById('masterVolume').value = 70;
+            updateMasterVolume(70);
+
+            // Reset meditation volumes
+            Object.keys(meditationAudio).forEach(id => {
+                const card = document.querySelector(`[data-meditation="${id}"]`);
+                const slider = card.querySelector('.meditation-volume');
+                meditationAudio[id].audio.volume = slider.value / 100;
+            });
+        }
+
+        // Start fade out
+        function startFadeOut() {
+            const masterSlider = document.getElementById('masterVolume');
+            const startMasterVolume = parseInt(masterSlider.value);
+            const fadeSteps = FADE_DURATION * 10; // Update every 100ms
+            let currentStep = 0;
+
+            // Store original meditation volumes
+            const originalMedVolumes = {};
+            Object.keys(meditationAudio).forEach(id => {
+                originalMedVolumes[id] = meditationAudio[id].audio.volume;
+            });
+
+            fadeOutInterval = setInterval(() => {
+                currentStep++;
+                const progress = currentStep / fadeSteps;
+                const newVolume = startMasterVolume * (1 - progress);
+
+                // Fade master volume
+                masterSlider.value = Math.max(0, newVolume);
+                updateMasterVolume(newVolume);
+
+                // Fade meditation volumes
+                Object.keys(meditationAudio).forEach(id => {
+                    meditationAudio[id].audio.volume = originalMedVolumes[id] * (1 - progress);
+                });
+
+                if (currentStep >= fadeSteps) {
+                    clearInterval(fadeOutInterval);
+                    fadeOutInterval = null;
+                }
+            }, 100);
+        }
+
+        // Stop all audio
+        function stopAllAudio() {
+            // Stop ambient sounds
+            sounds.forEach(sound => {
+                const card = document.querySelector(`[data-sound="${sound.id}"]`);
+                if (card.classList.contains('active')) {
+                    toggleSound(sound.id, card);
+                }
+            });
+
+            // Stop meditation
+            if (activeMeditation) {
+                stopMeditation(activeMeditation);
+                activeMeditation = null;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initFilters();
+            initPresets();
+            initSounds();
+            initMeditations();
+
+            document.getElementById('masterVolume').addEventListener('input', (e) => {
+                updateMasterVolume(e.target.value);
+            });
+
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            }
+        });
+    </script>
+</body>
+</html>
