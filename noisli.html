@@ -418,6 +418,258 @@
             display: none;
         }
 
+        /* Upload Sound Card */
+        .sound-card.upload-card {
+            border: 2px dashed var(--accent-light);
+            background: linear-gradient(135deg, rgba(157, 142, 199, 0.05) 0%, rgba(196, 184, 219, 0.05) 100%);
+        }
+
+        .sound-card.upload-card:hover {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(157, 142, 199, 0.1) 0%, rgba(196, 184, 219, 0.1) 100%);
+        }
+
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-light);
+            transition: all 0.25s ease;
+        }
+
+        .sound-card.upload-card:hover .upload-icon {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .upload-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .delete-sound-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(232, 200, 125, 0.2);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            color: var(--warning);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .sound-card.custom-sound:hover .delete-sound-btn {
+            display: flex;
+        }
+
+        .delete-sound-btn:hover {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Upload Modal */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .upload-modal.active {
+            display: flex;
+        }
+
+        .upload-modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px var(--shadow);
+        }
+
+        .upload-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .upload-modal-header h2 {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .upload-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .upload-modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .upload-form-group {
+            margin-bottom: 20px;
+        }
+
+        .upload-form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .upload-form-group input[type="text"],
+        .upload-form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            transition: all 0.2s;
+        }
+
+        .upload-form-group input[type="text"]:focus,
+        .upload-form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(157, 142, 199, 0.1);
+        }
+
+        .upload-form-group input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-btn {
+            width: 100%;
+            padding: 16px;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .file-upload-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .file-upload-btn.has-file {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(157, 142, 199, 0.05);
+        }
+
+        .tag-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-checkbox {
+            display: none;
+        }
+
+        .tag-label {
+            padding: 8px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-label:hover {
+            border-color: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        .tag-checkbox:checked + .tag-label {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .upload-submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 24px;
+        }
+
+        .upload-submit-btn:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(157, 142, 199, 0.3);
+        }
+
+        .upload-submit-btn:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .upload-error {
+            color: var(--warning);
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .upload-error.show {
+            display: block;
+        }
+
         /* Filter Section */
         .filter-section {
             margin-bottom: 24px;
@@ -1310,6 +1562,65 @@
         </div>
     </div>
 
+    <!-- Upload Sound Modal -->
+    <div class="upload-modal" id="uploadModal">
+        <div class="upload-modal-content">
+            <div class="upload-modal-header">
+                <h2>Upload Custom Sound</h2>
+                <button class="upload-modal-close" onclick="closeUploadModal()">&times;</button>
+            </div>
+            <form id="uploadForm" onsubmit="handleSoundUpload(event)">
+                <div class="upload-form-group">
+                    <label for="soundName">Sound Name *</label>
+                    <input type="text" id="soundName" placeholder="e.g., Coffee Shop" required maxlength="20">
+                </div>
+
+                <div class="upload-form-group">
+                    <label for="soundType">Category *</label>
+                    <select id="soundType" required>
+                        <option value="">Select category...</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Urban">Urban</option>
+                        <option value="Instrumental">Instrumental</option>
+                        <option value="White Noise">White Noise</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="upload-form-group">
+                    <label>Situations (select all that apply)</label>
+                    <div class="tag-selection">
+                        <input type="checkbox" id="tag-sleep" class="tag-checkbox" value="Sleep">
+                        <label for="tag-sleep" class="tag-label">Sleep</label>
+
+                        <input type="checkbox" id="tag-study" class="tag-checkbox" value="Study">
+                        <label for="tag-study" class="tag-label">Study</label>
+
+                        <input type="checkbox" id="tag-meditation" class="tag-checkbox" value="Meditation">
+                        <label for="tag-meditation" class="tag-label">Meditation</label>
+
+                        <input type="checkbox" id="tag-relaxation" class="tag-checkbox" value="Relaxation">
+                        <label for="tag-relaxation" class="tag-label">Relaxation</label>
+
+                        <input type="checkbox" id="tag-focus" class="tag-checkbox" value="Focus">
+                        <label for="tag-focus" class="tag-label">Focus</label>
+                    </div>
+                </div>
+
+                <div class="upload-form-group">
+                    <label for="soundFile">Audio File * (MP3, WAV, OGG - max 10MB)</label>
+                    <input type="file" id="soundFile" accept="audio/mp3,audio/wav,audio/ogg,audio/mpeg" required>
+                    <div class="file-upload-btn" onclick="document.getElementById('soundFile').click()">
+                        <span id="fileUploadText">Choose audio file...</span>
+                    </div>
+                    <div class="upload-error" id="uploadError"></div>
+                </div>
+
+                <button type="submit" class="upload-submit-btn" id="uploadSubmitBtn">Upload Sound</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Sound configuration - using verified working audio sources
         const SOUND_BASE = 'https://raw.githubusercontent.com/petrovicstefanrs/chillnsound/master/app/sounds/';
@@ -1386,6 +1697,36 @@
         const audioElements = {};
         const gainNodes = {};
         const generatedSources = {};
+
+        // Custom sounds storage
+        let customSounds = [];
+
+        // Load custom sounds from localStorage
+        function loadCustomSounds() {
+            try {
+                const stored = localStorage.getItem('customSounds');
+                if (stored) {
+                    customSounds = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error('Error loading custom sounds:', e);
+                customSounds = [];
+            }
+        }
+
+        // Save custom sounds to localStorage
+        function saveCustomSounds() {
+            try {
+                localStorage.setItem('customSounds', JSON.stringify(customSounds));
+            } catch (e) {
+                console.error('Error saving custom sounds:', e);
+            }
+        }
+
+        // Get all sounds (built-in + custom)
+        function getAllSounds() {
+            return [...sounds, ...customSounds];
+        }
 
         // Initialize audio context on first user interaction
         function initAudioContext() {
@@ -1716,6 +2057,12 @@
             card.dataset.sound = sound.id;
             card.dataset.type = sound.type;
             card.dataset.situations = sound.situations.join(',');
+
+            // Mark custom sounds
+            if (sound.custom) {
+                card.classList.add('custom-sound');
+            }
+
             // Generated noises are louder, so default to lower volume
             const defaultVolume = sound.generated ? 25 : 50;
 
@@ -1735,7 +2082,13 @@
                 </div>
             ` : '';
 
+            // Delete button for custom sounds
+            const deleteBtn = sound.custom ? `
+                <button class="delete-sound-btn" onclick="deleteCustomSound('${sound.id}', event)" title="Delete sound">×</button>
+            ` : '';
+
             card.innerHTML = `
+                ${deleteBtn}
                 ${binauralTooltip}
                 <span class="sound-icon">${sound.icon}</span>
                 <div class="sound-name">${sound.name}</div>
@@ -1743,6 +2096,199 @@
                        onclick="event.stopPropagation()">
             `;
             return card;
+        }
+
+        // Create upload card
+        function createUploadCard() {
+            const card = document.createElement('div');
+            card.className = 'sound-card upload-card';
+            card.innerHTML = `
+                <span class="upload-icon">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </span>
+                <div class="sound-name">Upload Sound</div>
+            `;
+            card.addEventListener('click', openUploadModal);
+            return card;
+        }
+
+        // Open upload modal
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+            document.getElementById('uploadForm').reset();
+            document.getElementById('fileUploadText').textContent = 'Choose audio file...';
+            document.querySelector('.file-upload-btn').classList.remove('has-file');
+            document.getElementById('uploadError').classList.remove('show');
+        }
+
+        // Close upload modal
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+        }
+
+        // Handle file selection display
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('soundFile');
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    const textEl = document.getElementById('fileUploadText');
+                    const btnEl = document.querySelector('.file-upload-btn');
+                    const errorEl = document.getElementById('uploadError');
+
+                    if (file) {
+                        // Validate file size (10MB max)
+                        if (file.size > 10 * 1024 * 1024) {
+                            errorEl.textContent = 'File size must be less than 10MB';
+                            errorEl.classList.add('show');
+                            e.target.value = '';
+                            textEl.textContent = 'Choose audio file...';
+                            btnEl.classList.remove('has-file');
+                            return;
+                        }
+
+                        errorEl.classList.remove('show');
+                        textEl.textContent = file.name;
+                        btnEl.classList.add('has-file');
+                    } else {
+                        textEl.textContent = 'Choose audio file...';
+                        btnEl.classList.remove('has-file');
+                    }
+                });
+            }
+        });
+
+        // Handle sound upload
+        function handleSoundUpload(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('soundName').value.trim();
+            const type = document.getElementById('soundType').value;
+            const file = document.getElementById('soundFile').files[0];
+
+            // Get selected situations
+            const situations = Array.from(document.querySelectorAll('.tag-checkbox:checked'))
+                .map(cb => cb.value);
+
+            if (!name || !type || !file || situations.length === 0) {
+                const errorEl = document.getElementById('uploadError');
+                errorEl.textContent = 'Please fill in all required fields and select at least one situation';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            // Create unique ID
+            const id = 'custom-' + Date.now();
+
+            // Read file as data URL
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const audioData = e.target.result;
+
+                // Create custom sound object with music note icon
+                const customSound = {
+                    id: id,
+                    name: name,
+                    icon: ICONS.music,
+                    url: audioData,
+                    type: type,
+                    situations: situations,
+                    custom: true
+                };
+
+                // Add to custom sounds
+                customSounds.push(customSound);
+                saveCustomSounds();
+
+                // Re-render sounds
+                renderAllSounds();
+
+                // Close modal
+                closeUploadModal();
+            };
+
+            reader.onerror = function() {
+                const errorEl = document.getElementById('uploadError');
+                errorEl.textContent = 'Error reading file. Please try again.';
+                errorEl.classList.add('show');
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Delete custom sound
+        function deleteCustomSound(soundId, event) {
+            event.stopPropagation();
+
+            if (confirm('Are you sure you want to delete this custom sound?')) {
+                // Stop sound if playing
+                const card = document.querySelector(`[data-sound="${soundId}"]`);
+                if (card && card.classList.contains('active')) {
+                    toggleSound(soundId, card);
+                }
+
+                // Remove from custom sounds
+                customSounds = customSounds.filter(s => s.id !== soundId);
+                saveCustomSounds();
+
+                // Remove audio element
+                if (audioElements[soundId]) {
+                    delete audioElements[soundId];
+                }
+
+                // Re-render sounds
+                renderAllSounds();
+            }
+        }
+
+        // Render all sounds (built-in + custom + upload card)
+        function renderAllSounds() {
+            const grid = document.getElementById('soundGrid');
+            grid.innerHTML = '';
+
+            const allSounds = getAllSounds();
+
+            // Render all sound cards
+            allSounds.forEach(sound => {
+                const card = createSoundCard(sound);
+                grid.appendChild(card);
+
+                if (sound.generated) {
+                    audioElements[sound.id] = { type: 'generated', noiseType: sound.generated };
+                } else {
+                    if (!audioElements[sound.id]) {
+                        const audio = new Audio();
+                        audio.src = sound.url;
+                        audio.loop = true;
+                        audio.preload = 'auto';
+                        audio.volume = 0.5 * 0.7;
+                        audioElements[sound.id] = { type: 'file', audio };
+                    }
+                }
+
+                // Card click handler
+                card.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('volume-slider') ||
+                        e.target.classList.contains('delete-sound-btn')) return;
+                    toggleSound(sound.id, card);
+                });
+
+                // Volume slider handler
+                const slider = card.querySelector('.volume-slider');
+                slider.addEventListener('input', (e) => {
+                    updateVolume(sound.id, e.target.value);
+                });
+            });
+
+            // Add upload card at the end
+            const uploadCard = createUploadCard();
+            grid.appendChild(uploadCard);
+
+            // Apply current filter
+            applyFilter(currentFilter);
         }
 
         // Initialize filter buttons
@@ -1775,8 +2321,14 @@
 
         function applyFilters() {
             document.querySelectorAll('.sound-card').forEach(card => {
+                // Always show upload card
+                if (card.classList.contains('upload-card')) {
+                    card.classList.remove('hidden');
+                    return;
+                }
+
                 const cardType = card.dataset.type;
-                const cardSituations = card.dataset.situations.split(',');
+                const cardSituations = card.dataset.situations ? card.dataset.situations.split(',') : [];
 
                 let matches = false;
                 if (currentFilter === 'All') {
@@ -1789,6 +2341,12 @@
 
                 card.classList.toggle('hidden', !matches);
             });
+        }
+
+        // Helper function to apply filter (used by renderAllSounds)
+        function applyFilter(filter) {
+            currentFilter = filter;
+            applyFilters();
         }
 
         // ==================== PRESETS SYSTEM ====================
@@ -2064,8 +2622,8 @@
         function randomizeSounds() {
             stopAllSounds();
 
-            // Get visible sounds based on current filter
-            const visibleCards = Array.from(document.querySelectorAll('.sound-card:not(.hidden)'));
+            // Get visible sounds based on current filter (exclude upload card)
+            const visibleCards = Array.from(document.querySelectorAll('.sound-card:not(.hidden):not(.upload-card)'));
 
             if (visibleCards.length === 0) {
                 alert('No sounds match current filter');
@@ -2108,37 +2666,8 @@
 
         // Initialize sounds
         function initSounds() {
-            const grid = document.getElementById('soundGrid');
-
-            sounds.forEach(sound => {
-                const card = createSoundCard(sound);
-                grid.appendChild(card);
-
-                if (sound.generated) {
-                    // Generated noise - will be created when activated
-                    audioElements[sound.id] = { type: 'generated', noiseType: sound.generated };
-                } else {
-                    // Audio file
-                    const audio = new Audio();
-                    audio.src = sound.url;
-                    audio.loop = true;
-                    audio.preload = 'auto';
-                    audio.volume = 0.5 * 0.7; // 50% individual * 70% master
-                    audioElements[sound.id] = { type: 'file', audio };
-                }
-
-                // Card click handler
-                card.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('volume-slider')) return;
-                    toggleSound(sound.id, card);
-                });
-
-                // Volume slider handler
-                const slider = card.querySelector('.volume-slider');
-                slider.addEventListener('input', (e) => {
-                    updateVolume(sound.id, e.target.value);
-                });
-            });
+            loadCustomSounds();
+            renderAllSounds();
         }
 
         // Toggle sound on/off
@@ -2155,10 +2684,14 @@
                     soundData.audio.pause();
                 } else if (soundData.type === 'generated' && generatedSources[soundId]) {
                     // Check if it's a binaural beat or regular noise
-                    if (generatedSources[soundId].stop) {
-                        generatedSources[soundId].stop();
-                    } else {
-                        generatedSources[soundId].source.stop();
+                    try {
+                        if (generatedSources[soundId].stop) {
+                            generatedSources[soundId].stop();
+                        } else {
+                            generatedSources[soundId].source.stop();
+                        }
+                    } catch (e) {
+                        console.log('Error stopping sound:', e);
                     }
                     delete generatedSources[soundId];
                 }
@@ -2170,9 +2703,32 @@
                 const masterVolume = document.getElementById('masterVolume').value / 100;
 
                 if (soundData.type === 'file') {
+                    // Reset audio element if it's ended or in a bad state
+                    if (soundData.audio.ended || soundData.audio.error) {
+                        soundData.audio.currentTime = 0;
+                    }
                     soundData.audio.volume = volume * masterVolume;
                     soundData.audio.play().catch(e => console.log('Audio play failed:', e));
                 } else if (soundData.type === 'generated') {
+                    // Make sure any existing source is cleaned up first
+                    if (generatedSources[soundId]) {
+                        try {
+                            if (generatedSources[soundId].stop) {
+                                generatedSources[soundId].stop();
+                            } else if (generatedSources[soundId].source) {
+                                generatedSources[soundId].source.stop();
+                            }
+                        } catch (e) {
+                            // Source already stopped, ignore
+                        }
+                        delete generatedSources[soundId];
+                    }
+
+                    // Ensure audio context is running
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+
                     // Check the type of generated sound
                     if (soundData.noiseType.startsWith('binaural')) {
                         const binaural = createBinauralBeat(soundData.noiseType, volume * masterVolume);
@@ -2678,10 +3234,11 @@
 
         // Stop all audio
         function stopAllAudio() {
-            // Stop ambient sounds
-            sounds.forEach(sound => {
+            // Stop all ambient sounds (built-in and custom)
+            const allSounds = getAllSounds();
+            allSounds.forEach(sound => {
                 const card = document.querySelector(`[data-sound="${sound.id}"]`);
-                if (card.classList.contains('active')) {
+                if (card && card.classList.contains('active')) {
                     toggleSound(sound.id, card);
                 }
             });
