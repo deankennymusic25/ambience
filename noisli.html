@@ -1621,6 +1621,11 @@
         </div>
     </div>
 
+    <!-- Silent Audio Track for Mobile Screen Lock Fix -->
+    <audio id="keepAlive" loop playsinline preload="auto" style="display: none;">
+        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4SZM3qnAAAAAAAAAAAAAAAAAAAAAP/7UGQAD/AAAGkAAAAIAAANIAAAAQAAAaQAAAAgAAA0gAAABExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7UGQSD/AAAGkAAAAIAAANIAAAAQAAAaQAAAAgAAA0gAAABFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mp3">
+    </audio>
+
     <script>
         // ==================== AUDIO PLAYBACK IMPROVEMENTS ====================
         // 1. Wake Lock API - Prevents screen from turning off during playback
@@ -1628,6 +1633,7 @@
         // 3. Audio Error Recovery - Auto-retry on errors, stalls, and suspends
         // 4. Continuous Playback - Handles unexpected audio endings
         // 5. Improved Preloading - All audio elements use preload="auto"
+        // 6. Silent Audio Track - Prevents AudioContext suspension on mobile screen lock
         // ======================================================================
 
         // Sound configuration - using verified working audio sources
@@ -1711,6 +1717,32 @@
 
         // Wake Lock API support
         let wakeLock = null;
+
+        // Silent audio track to prevent mobile audio suspension
+        let keepAliveAudio = null;
+
+        // Start silent audio track (mobile screen lock workaround)
+        function startKeepAlive() {
+            if (!keepAliveAudio) {
+                keepAliveAudio = document.getElementById('keepAlive');
+            }
+            if (keepAliveAudio && keepAliveAudio.paused) {
+                keepAliveAudio.volume = 0.01; // Very low volume but not muted
+                keepAliveAudio.play().catch(e => {
+                    console.log('Keep-alive audio failed:', e);
+                });
+                console.log('Keep-alive audio started');
+            }
+        }
+
+        // Stop silent audio track when no sounds are playing
+        function stopKeepAlive() {
+            if (keepAliveAudio && !keepAliveAudio.paused) {
+                keepAliveAudio.pause();
+                keepAliveAudio.currentTime = 0;
+                console.log('Keep-alive audio stopped');
+            }
+        }
 
         // Request wake lock to prevent screen from turning off during playback
         async function requestWakeLock() {
@@ -2863,9 +2895,10 @@
                     delete generatedSources[soundId];
                 }
 
-                // Release wake lock if no sounds are playing
+                // Release wake lock and stop keep-alive if no sounds are playing
                 if (!isAnySoundPlaying()) {
                     releaseWakeLock();
+                    stopKeepAlive();
                 }
             } else {
                 // Turn on
@@ -2938,8 +2971,9 @@
                     }
                 }
 
-                // Request wake lock when any sound is playing
+                // Request wake lock and start keep-alive when any sound is playing
                 requestWakeLock();
+                startKeepAlive();
             }
         }
 
@@ -3180,12 +3214,14 @@
                     playBtn.textContent = '⏸';
                     startMeditationTimer(meditationId);
                     requestWakeLock();
+                    startKeepAlive();
                 } else {
                     medData.audio.pause();
                     playBtn.textContent = '▶';
                     stopMeditationTimer();
                     if (!isAnySoundPlaying()) {
                         releaseWakeLock();
+                        stopKeepAlive();
                     }
                 }
             } else {
@@ -3213,6 +3249,7 @@
                 playBtn.textContent = '⏸';
                 startMeditationTimer(meditationId);
                 requestWakeLock();
+                startKeepAlive();
             }
         }
 
@@ -3231,9 +3268,10 @@
 
             stopMeditationTimer();
 
-            // Release wake lock if no sounds are playing
+            // Release wake lock and stop keep-alive if no sounds are playing
             if (!isAnySoundPlaying()) {
                 releaseWakeLock();
+                stopKeepAlive();
             }
         }
 
@@ -3260,9 +3298,10 @@
             }
             stopMeditationTimer();
 
-            // Release wake lock if no sounds are playing
+            // Release wake lock and stop keep-alive if no sounds are playing
             if (!isAnySoundPlaying()) {
                 releaseWakeLock();
+                stopKeepAlive();
             }
         }
 
