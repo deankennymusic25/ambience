@@ -1691,16 +1691,18 @@
             { id: 'whale', name: 'Whale', icon: ICONS.whale, url: MOODIST_BASE + 'animals/whale.mp3', type: 'Animals', situations: ['Sleep', 'Meditation', 'Relaxation'] },
             // Lo-fi & Music
             { id: 'vinyl', name: 'Vinyl Crackle', icon: ICONS.vinyl, url: MOODIST_BASE + 'things/vinyl-effect.mp3', type: 'Music', situations: ['Study', 'Relaxation', 'Focus'] },
-            { id: 'lofi-beat', name: 'Lo-Fi Beat', icon: ICONS.music, generated: 'lofi', type: 'Music', situations: ['Study', 'Focus', 'Relaxation'] },
-            { id: 'ambient-pad', name: 'Ambient Pad', icon: ICONS.keys, generated: 'ambient-pad', type: 'Music', situations: ['Sleep', 'Meditation', 'Relaxation'] },
-            { id: 'drone-strings', name: 'Drone Strings', icon: ICONS.strings, generated: 'drone-strings', type: 'Music', situations: ['Meditation', 'Relaxation', 'Sleep'] },
-            // Generated Noise
-            { id: 'whitenoise', name: 'White Noise', icon: ICONS.noise, generated: 'white', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
-            { id: 'pinknoise', name: 'Pink Noise', icon: ICONS.noise, generated: 'pink', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
-            { id: 'brownnoise', name: 'Brown Noise', icon: ICONS.noise, generated: 'brown', type: 'Noise', situations: ['Sleep', 'Focus', 'Relaxation'] },
-            // Binaural Beats
-            { id: 'binaural-alpha', name: 'Alpha Waves', icon: ICONS.brain, generated: 'binaural-alpha', type: 'Binaural', situations: ['Relaxation', 'Focus', 'Study'] },
-            { id: 'binaural-theta', name: 'Theta Waves', icon: ICONS.spiral, generated: 'binaural-theta', type: 'Binaural', situations: ['Meditation', 'Sleep', 'Relaxation'] }
+            // NOTE: Generated sounds below use Web Audio API and may not work on iOS Safari when screen is locked
+            // { id: 'lofi-beat', name: 'Lo-Fi Beat', icon: ICONS.music, generated: 'lofi', type: 'Music', situations: ['Study', 'Focus', 'Relaxation'] },
+            // { id: 'ambient-pad', name: 'Ambient Pad', icon: ICONS.keys, generated: 'ambient-pad', type: 'Music', situations: ['Sleep', 'Meditation', 'Relaxation'] },
+            // { id: 'drone-strings', name: 'Drone Strings', icon: ICONS.strings, generated: 'drone-strings', type: 'Music', situations: ['Meditation', 'Relaxation', 'Sleep'] },
+            // Noise (using audio files for iOS Safari screen lock compatibility)
+            // Using longer, seamlessly looping noise files from reliable CDNs
+            { id: 'whitenoise', name: 'White Noise', icon: ICONS.noise, url: 'https://cdn.freesound.org/previews/191/191622_1015240-lq.mp3', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
+            { id: 'pinknoise', name: 'Pink Noise', icon: ICONS.noise, url: 'https://cdn.freesound.org/previews/198/198876_3705681-lq.mp3', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
+            { id: 'brownnoise', name: 'Brown Noise', icon: ICONS.noise, url: 'https://cdn.freesound.org/previews/213/213874_3840364-lq.mp3', type: 'Noise', situations: ['Sleep', 'Focus', 'Relaxation'] },
+            // Binaural Beats - NOTE: Generated sounds use Web Audio API and may not work on iOS Safari when screen is locked
+            // { id: 'binaural-alpha', name: 'Alpha Waves', icon: ICONS.brain, generated: 'binaural-alpha', type: 'Binaural', situations: ['Relaxation', 'Focus', 'Study'] },
+            // { id: 'binaural-theta', name: 'Theta Waves', icon: ICONS.spiral, generated: 'binaural-theta', type: 'Binaural', situations: ['Meditation', 'Sleep', 'Relaxation'] }
         ];
 
         // Current filter state
@@ -2405,15 +2407,13 @@
                 const card = createSoundCard(sound);
                 grid.appendChild(card);
 
-                if (sound.generated) {
-                    audioElements[sound.id] = { type: 'generated', noiseType: sound.generated };
-                } else {
-                    if (!audioElements[sound.id]) {
-                        const audio = new Audio();
-                        audio.src = sound.url;
-                        audio.loop = true;
-                        audio.preload = 'auto';
-                        audio.volume = 0.5 * 0.7;
+                // All sounds now use audio files for iOS Safari compatibility
+                if (!audioElements[sound.id]) {
+                    const audio = new Audio();
+                    audio.src = sound.url;
+                    audio.loop = true;
+                    audio.preload = 'auto';
+                    audio.volume = 0.5 * 0.7;
 
                         // Add error recovery for audio playback
                         audio.addEventListener('error', (e) => {
@@ -2464,8 +2464,7 @@
                             }
                         });
 
-                        audioElements[sound.id] = { type: 'file', audio };
-                    }
+                    audioElements[sound.id] = { type: 'file', audio };
                 }
 
                 // Card click handler
@@ -2877,22 +2876,28 @@
             const isActive = card.classList.contains('active');
 
             if (isActive) {
-                // Turn off
+                // Turn off with fade-out effect
                 card.classList.remove('active');
+
                 if (soundData.type === 'file') {
-                    soundData.audio.pause();
-                } else if (soundData.type === 'generated' && generatedSources[soundId]) {
-                    // Check if it's a binaural beat or regular noise
-                    try {
-                        if (generatedSources[soundId].stop) {
-                            generatedSources[soundId].stop();
-                        } else {
-                            generatedSources[soundId].source.stop();
+                    const audio = soundData.audio;
+                    const targetVolume = 0;
+                    const startVolume = audio.volume;
+                    const fadeOutDuration = 300; // 300ms fade out
+                    const steps = 30;
+                    const stepDuration = fadeOutDuration / steps;
+                    let currentStep = 0;
+
+                    const fadeOutInterval = setInterval(() => {
+                        currentStep++;
+                        const progress = currentStep / steps;
+                        audio.volume = Math.max(0, startVolume * (1 - progress));
+
+                        if (currentStep >= steps) {
+                            clearInterval(fadeOutInterval);
+                            audio.pause();
                         }
-                    } catch (e) {
-                        console.log('Error stopping sound:', e);
-                    }
-                    delete generatedSources[soundId];
+                    }, stepDuration);
                 }
 
                 // Release wake lock and stop keep-alive if no sounds are playing
@@ -2901,74 +2906,47 @@
                     stopKeepAlive();
                 }
             } else {
-                // Turn on
+                // Turn on with fade-in effect
                 card.classList.add('active');
                 const slider = card.querySelector('.volume-slider');
                 const volume = slider.value / 100;
                 const masterVolume = document.getElementById('masterVolume').value / 100;
+                const targetVolume = volume * masterVolume;
 
                 if (soundData.type === 'file') {
+                    const audio = soundData.audio;
+
                     // Reset audio element if it's ended or in a bad state
-                    if (soundData.audio.ended || soundData.audio.error) {
-                        soundData.audio.currentTime = 0;
+                    if (audio.ended || audio.error) {
+                        audio.currentTime = 0;
                     }
-                    soundData.audio.volume = volume * masterVolume;
-                    soundData.audio.play().catch(e => {
+
+                    // Start at volume 0 for fade-in
+                    audio.volume = 0;
+                    audio.play().catch(e => {
                         console.log('Audio play failed:', e);
                         // Retry after a short delay
                         setTimeout(() => {
-                            soundData.audio.play().catch(err => console.log('Retry failed:', err));
+                            audio.play().catch(err => console.log('Retry failed:', err));
                         }, 500);
                     });
-                } else if (soundData.type === 'generated') {
-                    // Make sure any existing source is cleaned up first
-                    if (generatedSources[soundId]) {
-                        try {
-                            if (generatedSources[soundId].stop) {
-                                generatedSources[soundId].stop();
-                            } else if (generatedSources[soundId].source) {
-                                generatedSources[soundId].source.stop();
-                            }
-                        } catch (e) {
-                            // Source already stopped, ignore
+
+                    // Fade in over 500ms
+                    const fadeInDuration = 500;
+                    const steps = 50;
+                    const stepDuration = fadeInDuration / steps;
+                    let currentStep = 0;
+
+                    const fadeInInterval = setInterval(() => {
+                        currentStep++;
+                        const progress = currentStep / steps;
+                        audio.volume = Math.min(targetVolume, targetVolume * progress);
+
+                        if (currentStep >= steps) {
+                            clearInterval(fadeInInterval);
+                            audio.volume = targetVolume;
                         }
-                        delete generatedSources[soundId];
-                    }
-
-                    // Ensure audio context is running
-                    if (audioContext.state === 'suspended') {
-                        audioContext.resume();
-                    }
-
-                    // Check the type of generated sound
-                    if (soundData.noiseType.startsWith('binaural')) {
-                        const binaural = createBinauralBeat(soundData.noiseType, volume * masterVolume);
-                        generatedSources[soundId] = binaural;
-                    } else if (soundData.noiseType === 'ambient-pad') {
-                        const pad = createAmbientPad(volume * masterVolume);
-                        generatedSources[soundId] = pad;
-                    } else if (soundData.noiseType === 'lofi') {
-                        const lofi = createLofiBeat(volume * masterVolume);
-                        generatedSources[soundId] = lofi;
-                    } else if (soundData.noiseType === 'drone-strings') {
-                        const drone = createDroneStrings(volume * masterVolume);
-                        generatedSources[soundId] = drone;
-                    } else {
-                        // Create generated noise (white, pink, brown)
-                        const buffer = generateNoiseBuffer(soundData.noiseType);
-                        const source = audioContext.createBufferSource();
-                        source.buffer = buffer;
-                        source.loop = true;
-
-                        const gainNode = audioContext.createGain();
-                        gainNode.gain.value = volume * masterVolume;
-
-                        source.connect(gainNode);
-                        gainNode.connect(audioContext.destination);
-                        source.start();
-
-                        generatedSources[soundId] = { source, gainNode };
-                    }
+                    }, stepDuration);
                 }
 
                 // Request wake lock and start keep-alive when any sound is playing
@@ -2983,15 +2961,8 @@
             const masterVolume = document.getElementById('masterVolume').value / 100;
             const soundData = audioElements[soundId];
 
-            if (soundData.type === 'file') {
+            if (soundData && soundData.type === 'file') {
                 soundData.audio.volume = volume * masterVolume;
-            } else if (generatedSources[soundId]) {
-                // Check if it's a binaural beat or regular noise
-                if (generatedSources[soundId].setVolume) {
-                    generatedSources[soundId].setVolume(volume * masterVolume);
-                } else {
-                    generatedSources[soundId].gainNode.gain.value = volume * masterVolume;
-                }
             }
         }
 
@@ -3001,19 +2972,16 @@
 
             sounds.forEach(sound => {
                 const card = document.querySelector(`[data-sound="${sound.id}"]`);
+                if (!card) return;
+
                 const slider = card.querySelector('.volume-slider');
+                if (!slider) return;
+
                 const volume = slider.value / 100;
                 const soundData = audioElements[sound.id];
 
-                if (soundData.type === 'file') {
+                if (soundData && soundData.type === 'file') {
                     soundData.audio.volume = volume * masterVolume;
-                } else if (generatedSources[sound.id]) {
-                    // Check if it's a binaural beat or regular noise
-                    if (generatedSources[sound.id].setVolume) {
-                        generatedSources[sound.id].setVolume(volume * masterVolume);
-                    } else {
-                        generatedSources[sound.id].gainNode.gain.value = volume * masterVolume;
-                    }
                 }
             });
         }
