@@ -1776,10 +1776,37 @@
         function initAudioContext() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Add AudioContext state change listener for aggressive resume
+                audioContext.onstatechange = () => {
+                    console.log('AudioContext state changed to:', audioContext.state);
+                    if (audioContext.state === 'suspended' && isAnySoundPlaying()) {
+                        console.log('AudioContext suspended - immediately resuming');
+                        audioContext.resume().catch(e => console.log('Resume failed:', e));
+                    }
+                };
             }
             if (audioContext.state === 'suspended') {
-                audioContext.resume();
+                audioContext.resume().catch(e => console.log('Resume failed:', e));
             }
+        }
+
+        // Aggressively resume AudioContext with multiple attempts
+        function aggressivelyResumeAudioContext() {
+            if (!audioContext) return;
+
+            const attemptResume = () => {
+                if (audioContext.state === 'suspended') {
+                    console.log('Attempting aggressive AudioContext resume');
+                    audioContext.resume().catch(e => console.log('Resume attempt failed:', e));
+                }
+            };
+
+            // Multiple resume attempts with delays to overcome iOS/Android timing issues
+            attemptResume(); // Immediate
+            setTimeout(attemptResume, 100); // +100ms
+            setTimeout(attemptResume, 500); // +500ms
+            setTimeout(attemptResume, 1000); // +1000ms
         }
 
         // Page Visibility API - Resume audio when page becomes visible
@@ -1787,10 +1814,8 @@
             if (!document.hidden) {
                 console.log('Page visible - resuming audio');
 
-                // Resume AudioContext if suspended
-                if (audioContext && audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
+                // Aggressively resume AudioContext with multiple attempts
+                aggressivelyResumeAudioContext();
 
                 // Resume all active file-based audio elements
                 Object.keys(audioElements).forEach(soundId => {
@@ -3468,13 +3493,26 @@
             }
         }
 
-        // Keep AudioContext alive - check every 5 seconds
+        // Keep AudioContext alive - aggressive health check every 1 second
         setInterval(() => {
             if (audioContext && audioContext.state === 'suspended' && isAnySoundPlaying()) {
-                console.log('AudioContext suspended unexpectedly - resuming');
-                audioContext.resume();
+                console.log('AudioContext suspended unexpectedly - aggressively resuming');
+                aggressivelyResumeAudioContext();
             }
-        }, 5000);
+        }, 1000); // Changed from 5000ms to 1000ms for more aggressive monitoring
+
+        // Add user interaction listeners to keep AudioContext alive
+        // On any touch or click, check and resume AudioContext if needed
+        const resumeOnInteraction = () => {
+            if (audioContext && audioContext.state === 'suspended') {
+                console.log('User interaction detected - resuming AudioContext');
+                audioContext.resume().catch(e => console.log('Resume on interaction failed:', e));
+            }
+        };
+
+        document.addEventListener('touchstart', resumeOnInteraction, { passive: true });
+        document.addEventListener('touchend', resumeOnInteraction, { passive: true });
+        document.addEventListener('click', resumeOnInteraction);
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
