@@ -1622,6 +1622,14 @@
     </div>
 
     <script>
+        // ==================== AUDIO PLAYBACK IMPROVEMENTS ====================
+        // 1. Wake Lock API - Prevents screen from turning off during playback
+        // 2. Page Visibility API - Resumes audio when page becomes visible
+        // 3. Audio Error Recovery - Auto-retry on errors, stalls, and suspends
+        // 4. Continuous Playback - Handles unexpected audio endings
+        // 5. Improved Preloading - All audio elements use preload="auto"
+        // ======================================================================
+
         // Sound configuration - using verified working audio sources
         const SOUND_BASE = 'https://raw.githubusercontent.com/petrovicstefanrs/chillnsound/master/app/sounds/';
         const MOODIST_BASE = 'https://raw.githubusercontent.com/remvze/moodist/main/public/sounds/';
@@ -1701,6 +1709,42 @@
         // Custom sounds storage
         let customSounds = [];
 
+        // Wake Lock API support
+        let wakeLock = null;
+
+        // Request wake lock to prevent screen from turning off during playback
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake lock acquired');
+
+                    wakeLock.addEventListener('release', () => {
+                        console.log('Wake lock released');
+                    });
+                } catch (err) {
+                    console.log('Wake lock request failed:', err);
+                }
+            }
+        }
+
+        // Release wake lock when no sounds are playing
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                    console.log('Wake lock manually released');
+                });
+            }
+        }
+
+        // Check if any sounds are playing
+        function isAnySoundPlaying() {
+            const hasActiveSounds = document.querySelectorAll('.sound-card.active:not(.upload-card)').length > 0;
+            const hasActiveMeditation = activeMeditation !== null;
+            return hasActiveSounds || hasActiveMeditation;
+        }
+
         // Load custom sounds from localStorage
         function loadCustomSounds() {
             try {
@@ -1737,6 +1781,54 @@
                 audioContext.resume();
             }
         }
+
+        // Page Visibility API - Resume audio when page becomes visible
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                console.log('Page visible - resuming audio');
+
+                // Resume AudioContext if suspended
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+
+                // Resume all active file-based audio elements
+                Object.keys(audioElements).forEach(soundId => {
+                    const soundData = audioElements[soundId];
+                    const card = document.querySelector(`[data-sound="${soundId}"]`);
+
+                    if (card && card.classList.contains('active') && soundData.type === 'file') {
+                        if (soundData.audio.paused) {
+                            soundData.audio.play().catch(e => {
+                                console.log('Failed to resume audio:', soundId, e);
+                                // Retry playback on error
+                                setTimeout(() => {
+                                    soundData.audio.play().catch(err => console.log('Retry failed:', err));
+                                }, 500);
+                            });
+                        }
+                    }
+                });
+
+                // Resume active meditation
+                if (activeMeditation) {
+                    const medData = meditationAudio[activeMeditation];
+                    if (medData && medData.audio.paused) {
+                        medData.audio.play().catch(e => {
+                            console.log('Failed to resume meditation:', e);
+                            setTimeout(() => {
+                                medData.audio.play().catch(err => console.log('Retry failed:', err));
+                            }, 500);
+                        });
+                    }
+                }
+
+                // Re-acquire wake lock if needed
+                if (isAnySoundPlaying() && !wakeLock) {
+                    requestWakeLock();
+                }
+            }
+        });
 
         // Generate noise buffer
         function generateNoiseBuffer(type) {
@@ -2265,6 +2357,56 @@
                         audio.loop = true;
                         audio.preload = 'auto';
                         audio.volume = 0.5 * 0.7;
+
+                        // Add error recovery for audio playback
+                        audio.addEventListener('error', (e) => {
+                            console.error('Audio error for', sound.id, ':', e);
+                            const card = document.querySelector(`[data-sound="${sound.id}"]`);
+                            if (card && card.classList.contains('active')) {
+                                // Retry loading after a delay
+                                setTimeout(() => {
+                                    console.log('Retrying audio load for', sound.id);
+                                    audio.load();
+                                }, 2000);
+                            }
+                        });
+
+                        // Handle stalled playback
+                        audio.addEventListener('stalled', () => {
+                            console.log('Audio stalled for', sound.id, '- attempting recovery');
+                            const card = document.querySelector(`[data-sound="${sound.id}"]`);
+                            if (card && card.classList.contains('active')) {
+                                audio.load();
+                                const volume = audio.volume;
+                                audio.volume = volume;
+                                audio.play().catch(e => console.log('Recovery play failed:', e));
+                            }
+                        });
+
+                        // Handle suspended playback
+                        audio.addEventListener('suspend', () => {
+                            console.log('Audio suspended for', sound.id);
+                            const card = document.querySelector(`[data-sound="${sound.id}"]`);
+                            if (card && card.classList.contains('active')) {
+                                // Try to resume playback
+                                setTimeout(() => {
+                                    if (audio.paused) {
+                                        audio.play().catch(e => console.log('Resume after suspend failed:', e));
+                                    }
+                                }, 1000);
+                            }
+                        });
+
+                        // Ensure loop continues
+                        audio.addEventListener('ended', () => {
+                            const card = document.querySelector(`[data-sound="${sound.id}"]`);
+                            if (card && card.classList.contains('active')) {
+                                console.log('Audio ended unexpectedly for', sound.id, '- restarting');
+                                audio.currentTime = 0;
+                                audio.play().catch(e => console.log('Restart failed:', e));
+                            }
+                        });
+
                         audioElements[sound.id] = { type: 'file', audio };
                     }
                 }
@@ -2695,6 +2837,11 @@
                     }
                     delete generatedSources[soundId];
                 }
+
+                // Release wake lock if no sounds are playing
+                if (!isAnySoundPlaying()) {
+                    releaseWakeLock();
+                }
             } else {
                 // Turn on
                 card.classList.add('active');
@@ -2708,7 +2855,13 @@
                         soundData.audio.currentTime = 0;
                     }
                     soundData.audio.volume = volume * masterVolume;
-                    soundData.audio.play().catch(e => console.log('Audio play failed:', e));
+                    soundData.audio.play().catch(e => {
+                        console.log('Audio play failed:', e);
+                        // Retry after a short delay
+                        setTimeout(() => {
+                            soundData.audio.play().catch(err => console.log('Retry failed:', err));
+                        }, 500);
+                    });
                 } else if (soundData.type === 'generated') {
                     // Make sure any existing source is cleaned up first
                     if (generatedSources[soundId]) {
@@ -2759,6 +2912,9 @@
                         generatedSources[soundId] = { source, gainNode };
                     }
                 }
+
+                // Request wake lock when any sound is playing
+                requestWakeLock();
             }
         }
 
@@ -2895,8 +3051,9 @@
                 // Create audio element
                 const audio = new Audio();
                 audio.src = meditation.url;
-                audio.preload = 'metadata';
+                audio.preload = 'auto';
                 audio.volume = 0.7;
+                audio.loop = false; // Handle looping manually
 
                 meditationAudio[meditation.id] = {
                     audio: audio,
@@ -2923,6 +3080,42 @@
                         const card = document.querySelector(`[data-meditation="${meditation.id}"]`);
                         card.querySelector('.meditation-duration').textContent = formatTime(audio.duration);
                         card.querySelector('.timer-remaining').textContent = formatTime(audio.duration);
+                    }
+                });
+
+                // Add error recovery for meditation audio
+                audio.addEventListener('error', (e) => {
+                    console.error('Meditation audio error for', meditation.id, ':', e);
+                    if (activeMeditation === meditation.id) {
+                        setTimeout(() => {
+                            console.log('Retrying meditation audio load for', meditation.id);
+                            audio.load();
+                        }, 2000);
+                    }
+                });
+
+                // Handle stalled playback
+                audio.addEventListener('stalled', () => {
+                    console.log('Meditation audio stalled for', meditation.id);
+                    if (activeMeditation === meditation.id) {
+                        audio.load();
+                        const currentTime = audio.currentTime;
+                        const volume = audio.volume;
+                        audio.currentTime = currentTime;
+                        audio.volume = volume;
+                        audio.play().catch(e => console.log('Recovery play failed:', e));
+                    }
+                });
+
+                // Handle suspended playback
+                audio.addEventListener('suspend', () => {
+                    console.log('Meditation audio suspended for', meditation.id);
+                    if (activeMeditation === meditation.id) {
+                        setTimeout(() => {
+                            if (audio.paused) {
+                                audio.play().catch(e => console.log('Resume after suspend failed:', e));
+                            }
+                        }, 1000);
                     }
                 });
 
@@ -2953,13 +3146,22 @@
             if (activeMeditation === meditationId) {
                 // Pause/resume current meditation
                 if (medData.audio.paused) {
-                    medData.audio.play();
+                    medData.audio.play().catch(e => {
+                        console.log('Meditation play failed:', e);
+                        setTimeout(() => {
+                            medData.audio.play().catch(err => console.log('Retry failed:', err));
+                        }, 500);
+                    });
                     playBtn.textContent = '⏸';
                     startMeditationTimer(meditationId);
+                    requestWakeLock();
                 } else {
                     medData.audio.pause();
                     playBtn.textContent = '▶';
                     stopMeditationTimer();
+                    if (!isAnySoundPlaying()) {
+                        releaseWakeLock();
+                    }
                 }
             } else {
                 // Pause any playing meditation (keep its position)
@@ -2975,11 +3177,17 @@
                     medData.currentLoop = 1;
                 }
 
-                medData.audio.play().catch(e => console.log('Meditation play failed:', e));
+                medData.audio.play().catch(e => {
+                    console.log('Meditation play failed:', e);
+                    setTimeout(() => {
+                        medData.audio.play().catch(err => console.log('Retry failed:', err));
+                    }, 500);
+                });
 
                 card.classList.add('active');
                 playBtn.textContent = '⏸';
                 startMeditationTimer(meditationId);
+                requestWakeLock();
             }
         }
 
@@ -2997,6 +3205,11 @@
             updateMeditationProgress(meditationId);
 
             stopMeditationTimer();
+
+            // Release wake lock if no sounds are playing
+            if (!isAnySoundPlaying()) {
+                releaseWakeLock();
+            }
         }
 
         // Stop meditation (resets position)
@@ -3021,6 +3234,11 @@
                 activeMeditation = null;
             }
             stopMeditationTimer();
+
+            // Release wake lock if no sounds are playing
+            if (!isAnySoundPlaying()) {
+                releaseWakeLock();
+            }
         }
 
         // Seek to position in meditation
@@ -3250,6 +3468,14 @@
             }
         }
 
+        // Keep AudioContext alive - check every 5 seconds
+        setInterval(() => {
+            if (audioContext && audioContext.state === 'suspended' && isAnySoundPlaying()) {
+                console.log('AudioContext suspended unexpectedly - resuming');
+                audioContext.resume();
+            }
+        }, 5000);
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             initFilters();
@@ -3267,6 +3493,14 @@
                     .then(reg => console.log('Service Worker registered'))
                     .catch(err => console.log('Service Worker registration failed:', err));
             }
+
+            // Handle wake lock release when visibility changes
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // Page hidden - wake lock will be auto-released by browser
+                    console.log('Page hidden - wake lock may be released by browser');
+                }
+            });
         });
     </script>
 </body>
