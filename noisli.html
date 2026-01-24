@@ -1696,10 +1696,10 @@
             // { id: 'ambient-pad', name: 'Ambient Pad', icon: ICONS.keys, generated: 'ambient-pad', type: 'Music', situations: ['Sleep', 'Meditation', 'Relaxation'] },
             // { id: 'drone-strings', name: 'Drone Strings', icon: ICONS.strings, generated: 'drone-strings', type: 'Music', situations: ['Meditation', 'Relaxation', 'Sleep'] },
             // Noise (using audio files for iOS Safari screen lock compatibility)
-            // Using the MOODIST_BASE which has proven to work reliably
-            { id: 'whitenoise', name: 'White Noise', icon: ICONS.noise, url: MOODIST_BASE + 'noises/white-noise.mp3', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
-            { id: 'pinknoise', name: 'Pink Noise', icon: ICONS.noise, url: MOODIST_BASE + 'noises/pink-noise.mp3', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
-            { id: 'brownnoise', name: 'Brown Noise', icon: ICONS.noise, url: MOODIST_BASE + 'noises/brown-noise.mp3', type: 'Noise', situations: ['Sleep', 'Focus', 'Relaxation'] },
+            // Using the MOODIST_BASE which has proven to work reliably - files are .wav not .mp3
+            { id: 'whitenoise', name: 'White Noise', icon: ICONS.noise, url: MOODIST_BASE + 'noise/white-noise.wav', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
+            { id: 'pinknoise', name: 'Pink Noise', icon: ICONS.noise, url: MOODIST_BASE + 'noise/pink-noise.wav', type: 'Noise', situations: ['Sleep', 'Focus', 'Study'] },
+            { id: 'brownnoise', name: 'Brown Noise', icon: ICONS.noise, url: MOODIST_BASE + 'noise/brown-noise.wav', type: 'Noise', situations: ['Sleep', 'Focus', 'Relaxation'] },
             // Binaural Beats - NOTE: Generated sounds use Web Audio API and may not work on iOS Safari when screen is locked
             // { id: 'binaural-alpha', name: 'Alpha Waves', icon: ICONS.brain, generated: 'binaural-alpha', type: 'Binaural', situations: ['Relaxation', 'Focus', 'Study'] },
             // { id: 'binaural-theta', name: 'Theta Waves', icon: ICONS.spiral, generated: 'binaural-theta', type: 'Binaural', situations: ['Meditation', 'Sleep', 'Relaxation'] }
